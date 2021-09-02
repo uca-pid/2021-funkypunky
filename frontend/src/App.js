@@ -1,35 +1,42 @@
-import logo from './logo.svg';
 import './App.css';
-import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route, } from "react-router-dom";
+import Home from './routes/home.js'
+import Register from './routes/register.js'
+import Login from './routes/login.js'
+import Forget from './routes/forget.js'
+import { Nav } from 'react-bootstrap';
 
-class App extends Component {
-  state = {
-    clients: []
-  };
+export default function App() {
+  return (
+    <Router>
+      <div>
+        <Nav variant="tabs" defaultActiveKey="/home">
+          <Nav.Item>
+            <Nav.Link href="/">Home</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="/register">Register</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="/login">Login</Nav.Link>
+          </Nav.Item>
+        </Nav>
 
-  async componentDidMount() {
-    const response = await fetch('/clients');
-    const body = await response.json();
-    this.setState({clients: body});
-  }
-
-  render() {
-    const {clients} = this.state;
-    return (
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <div className="App-intro">
-              <h2>Clients</h2>
-              {clients.map(client =>
-                  <div key={client.id}>
-                    {client.name} ({client.email})
-                  </div>
-              )}
-            </div>
-          </header>
-        </div>
-    );
-  }
+        <Switch>
+          <Route path="/forget">
+            <Forget />
+          </Route>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
 }
-export default App;

@@ -1,0 +1,11 @@
+form{
+    border: solid 5px blue;
+    border-radius: 25px;
+    padding: 2%;
+}
+.big{
+    padding: 5%;
+}
+a:hover{
+    cursor:pointer;
+}
