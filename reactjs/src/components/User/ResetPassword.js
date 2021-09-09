@@ -60,9 +60,6 @@ const ResetPassword = (props) => {
 
   return (
     <Row className="justify-content-md-center">
-      <div style={{ display: show ? "block" : "none" }}>
-        <MyToast show={show} message={message} type={"success"} />
-      </div>
       <Col xs={5}>
         {show && props.message && (
           <Alert variant="success" onClose={() => setShow(false)} dismissible>
@@ -76,7 +73,7 @@ const ResetPassword = (props) => {
         )}
         <Card className={"border border-dark bg-dark text-white"}>
           <Card.Header>
-            <FontAwesomeIcon icon={faSignInAlt} /> Login
+            <FontAwesomeIcon icon={faSignInAlt} /> Reset Password
           </Card.Header>
           <Card.Body>
             <Form.Row>
