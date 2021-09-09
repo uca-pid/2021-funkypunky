@@ -20,6 +20,22 @@ import {
 import {authenticateUser, updateUserPw} from "../../services/index";
 import {Link} from "react-router-dom";
 import MyToast from "../MyToast";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
+function swalAlert(){
+    MySwal.fire({
+      title: <p>Hello Funky Punky</p>,
+      footer: 'Copyright 2021',
+      didOpen: () => {
+        MySwal.clickConfirm()
+      }
+    }).then(() => {
+      return MySwal.fire(<p>Se ha enviado correctamente</p>)
+    })
+}
 
 const ResetPassword = (props) => {
   const [error, setError] = useState();
@@ -42,6 +58,7 @@ const ResetPassword = (props) => {
         .then((response) => {
           setShow(true);
           setMessage(response.message);
+          swalAlert();
           setTimeout(() => {
             setShow(false);
             props.history.push("/resetpassword");
