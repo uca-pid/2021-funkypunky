@@ -71,8 +71,8 @@ public class UserResourceImpl {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			User updatedUser = userRepository.findByEmail(user.getEmail());
-			String password = PasswordManager.generateRandomPassword(5);
-			emailService.sendSimpleMessage("fede.sarquis@hotmail.com","Contraseña Cambiada","Prueba" + password);
+			String password = PasswordManager.generateRandomPassword(8);
+			emailService.sendSimpleMessage(updatedUser.getEmail(),"Contraseña Cambiada - 2FIT","Su nueva contraseña es: " + password);
 			updatedUser.setPassword(new BCryptPasswordEncoder().encode(password));
 			log.info("New updated password : " + password);
 			User savedUser = userRepository.saveAndFlush(updatedUser);
