@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class UserResourceImpl {
 
 	private static Logger log = LoggerFactory.getLogger(UserResourceImpl.class);
@@ -111,11 +111,6 @@ public class UserResourceImpl {
 			return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
 		}
 		return null;
-	}
-
-	@GetMapping("/getTareas")
-	public User getTareas(){
-		return userRepository.findByEmail("test@admin.com");
 	}
 
 }

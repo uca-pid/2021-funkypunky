@@ -1,21 +1,31 @@
 package com.funkypunky;
 
-import com.funkypunky.domain.Role;
-import com.funkypunky.domain.User;
+import com.funkypunky.domain.*;
 import com.funkypunky.service.IRoleService;
 import com.funkypunky.service.IService;
+import com.funkypunky.service.impl.CategoriaServiceImpl;
+import com.funkypunky.service.impl.EntrenamientoServiceImpl;
 import com.funkypunky.utils.ConstantUtils;
+import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.Timestamp;
+
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 	@Autowired
 	private IService<User> userService;
+
+	@Autowired
+	private EntrenamientoServiceImpl entrenamientoService;
+
+	@Autowired
+	private CategoriaServiceImpl categoriaService;
 
 	@Autowired
 	private IRoleService<Role> roleService;
@@ -50,20 +60,23 @@ public class Application implements CommandLineRunner {
 			userService.saveOrUpdate(user2);
 		}
 
-//		if (bookService.findAll().isEmpty()) {
-//			for (int i = 1; i <= 1000; i++) {
-//				Book book = new Book();
-//				book.setTitle("Spring Microservices in Action " + i);
-//				book.setAuthor("John Carnell " + i);
-//				book.setCoverPhotoURL(
-//						"https://images-na.ssl-images-amazon.com/images/I/417zLTa1uqL._SX397_BO1,204,203,200_.jpg");
-//				book.setIsbnNumber(1617293989L);
-//				book.setPrice(2776.00 + i);
-//				book.setLanguage("English");
-//				book.setGenre("Technology");
-//				bookService.saveOrUpdate(book);
-//			}
-//		}
+		if (entrenamientoService.findAll().isEmpty()) {
+			Entrenamiento entrenamiento1 = new Entrenamiento();
+			User user = userService.findAll().stream().findFirst().get();
+			Categoria categoria = new Categoria();
+			categoria.setCalPerMin(10);
+			categoria.setIs_editable(Editable.EDITABLE);
+			categoria.setNombre("Correr");
+
+			entrenamiento1.setCategoria(categoria);
+			entrenamiento1.setAssignedUser(user);
+			entrenamiento1.setStartTime(new Timestamp(12344));
+			entrenamiento1.setEndTime(new Timestamp(16666));
+			entrenamiento1.setName("Lagos con agus el martes");
+
+			categoriaService.saveOrUpdate(categoria);
+			entrenamientoService.saveOrUpdate(entrenamiento1);
+		}
 	}
 
 }
