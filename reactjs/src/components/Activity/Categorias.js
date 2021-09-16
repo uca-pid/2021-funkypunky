@@ -30,7 +30,7 @@ state={
 }
 // +{auth.username} en .get -> consulta por usuario o all (para las fijas)
 peticionGet=()=>{
-axios.get(url+this.state.username).then(response=>{
+axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);

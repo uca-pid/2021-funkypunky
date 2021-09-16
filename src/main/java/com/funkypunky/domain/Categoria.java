@@ -23,6 +23,10 @@ public class Categoria {
 	@Column(nullable = false)
 	private Float calPerMin;
 
+	@ManyToOne
+	@JoinColumn
+	private User user;
+
 	@Enumerated
 	private Editable is_editable;
 
