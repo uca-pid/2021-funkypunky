@@ -1,13 +1,15 @@
 package com.funkypunky.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.h2.api.Interval;
+import org.joda.time.Interval;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Data
+@AllArgsConstructor
 @Table(name = "entrenamiento")
 public class Entrenamiento {
 	@Id

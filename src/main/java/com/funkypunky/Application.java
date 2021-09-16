@@ -6,7 +6,6 @@ import com.funkypunky.service.IService;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.EntrenamientoServiceImpl;
 import com.funkypunky.utils.ConstantUtils;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -64,7 +63,7 @@ public class Application implements CommandLineRunner {
 			Entrenamiento entrenamiento1 = new Entrenamiento();
 			User user = userService.findAll().stream().findFirst().get();
 			Categoria categoria = new Categoria();
-			categoria.setCalPerMin(10);
+			categoria.setCalPerMin(10F);
 			categoria.setIs_editable(Editable.EDITABLE);
 			categoria.setNombre("Correr");
 

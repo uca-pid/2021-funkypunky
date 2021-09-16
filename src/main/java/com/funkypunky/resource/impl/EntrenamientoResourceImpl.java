@@ -1,7 +1,9 @@
 package com.funkypunky.resource.impl;
 
 import com.funkypunky.domain.Entrenamiento;
+import com.funkypunky.domain.User;
 import com.funkypunky.repository.EntrenamientoRepository;
+import com.funkypunky.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +21,22 @@ public class EntrenamientoResourceImpl {
 	@Autowired
 	private EntrenamientoRepository entrenamientoRepository;
 
-	@GetMapping("/entrnamientoByUser")
+	@Autowired
+	private UserServiceImpl userService;
+
+	@GetMapping("/entrenamientoByUser")
 	@ResponseBody
-	public Collection<Entrenamiento> getEntrenamientoByuser(@RequestParam Long user_id) {
-		return entrenamientoRepository.findByUser(user_id);
+	public Collection<Entrenamiento> getEntrenamientoByuser(@RequestParam String user_email) {
+		User user = null;
+		if (userService.findByEmail(user_email).isPresent()) {
+			user = userService.findByEmail(user_email).get();
+		}
+		return entrenamientoRepository.findByUser(user);
 	}
 
-	@GetMapping("/getEntrnamientos")
+	@GetMapping("/getEntrenamientos")
 	@ResponseBody
-	public Collection<Entrenamiento> getEntrenamientoByuser() {
+	public Collection<Entrenamiento> getEntrenamientos() {
 		return entrenamientoRepository.findAll();
 	}
 }

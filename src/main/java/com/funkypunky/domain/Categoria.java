@@ -1,12 +1,16 @@
 package com.funkypunky.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "categoria")
 public class Categoria {
 	@Id
@@ -17,13 +21,10 @@ public class Categoria {
 	private String nombre;
 
 	@Column(nullable = false)
-	private float calPerMin;
+	private Float calPerMin;
 
 	@Enumerated
 	private Editable is_editable;
-
-	public Categoria() {
-	}
 
 }
 
