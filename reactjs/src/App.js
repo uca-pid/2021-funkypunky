@@ -11,6 +11,8 @@ import Login from "./components/User/Login";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import ResetPassword from "./components/User/ResetPassword";
+import Trainings from "./components/Activity/Trainings";
+import Categorias from "./components/Activity/Categorias";
 
 const App = () => {
   window.onbeforeunload = (event) => {
@@ -34,11 +36,13 @@ const App = () => {
               <Route path="/register" exact component={Register} />
               <Route path="/login" exact component={Login} />
               <Route path="/resetpassword" exact component={ResetPassword} />
+              <Route path="/entrenamientos" exact component={Trainings} />
+              <Route path="/categorias" exact component={Categorias} />
               <Route
                 path="/logout"
                 exact
                 component={() => (
-                  <Login message="User Logged Out Successfully." />
+                  <Welcome message="User Logged Out Successfully." />
                 )}
               />
             </Switch>

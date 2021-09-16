@@ -20,6 +20,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { registerUser } from "../../services/index";
 import MyToast from "../MyToast";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
+function swalAlert(){
+    MySwal.fire({
+      title: <p>Hello Funky Punky</p>,
+      footer: 'Copyright 2021',
+      didOpen: () => {
+        MySwal.clickConfirm()
+      }
+    }).then(() => {
+      return MySwal.fire(<p>Se ha enviado correctamente</p>)
+    })
+}
 
 const Register = (props) => {
   const [show, setShow] = useState(false);

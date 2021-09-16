@@ -34,8 +34,11 @@ const NavigationBar = () => {
   const userLinks = (
     <>
       <Nav className="mr-auto">
-        <Link to={"users"} className="nav-link">
-          User List
+        <Link to={"entrenamientos"} className="nav-link">
+            Entrenamientos
+        </Link>
+        <Link to={"categorias"} className="nav-link">
+            Categorias
         </Link>
       </Nav>
       <Nav className="navbar-right">
@@ -48,7 +51,7 @@ const NavigationBar = () => {
 
   return (
     <Navbar bg="dark" variant="dark">
-      <Link to={auth.isLoggedIn ? "home" : ""} className="navbar-brand">
+      <Link to={auth.isLoggeIn ? "home" : ""} className="navbar-brand">
         <img
           src="http://cdn.shopify.com/s/files/1/1061/1924/products/Flexed_Biceps_Emoji_Icon_ios10_grande.png?v=1571606090"
           width="25"
