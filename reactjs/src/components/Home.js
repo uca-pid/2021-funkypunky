@@ -14,7 +14,9 @@ const Home = () => {
     <Alert style={{ backgroundColor: "#343A40", color: "#ffffff80" }}>
       Welcome {auth.username}
     </Alert>
+
   );
 };
 
 export default Home;
+
