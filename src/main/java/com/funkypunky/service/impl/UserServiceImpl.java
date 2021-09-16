@@ -28,6 +28,10 @@ public class UserServiceImpl implements IService<User> {
 		return userRepository.findById(id);
 	}
 
+	public Optional<User> findByEmail(String email) {
+		return Optional.of(userRepository.findByEmail(email));
+	}
+
 	@Override
 	public User saveOrUpdate(User user) {
 		return userRepository.saveAndFlush(user);

@@ -12,13 +12,13 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
+package-lock.json
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-
+src/main/resources/database/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 reactjs/node_modules/
+

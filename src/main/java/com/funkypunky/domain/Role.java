@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_role")
+@Table(name = "role")
 public class Role {
 	@Id
 	@GeneratedValue
