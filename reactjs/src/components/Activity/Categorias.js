@@ -12,11 +12,7 @@ const url="";
 
 class Trainings extends Component {
 state={
-    data:[{id:1, nombre:'123qasd', editable:0, calsXMin:13, usuario:2},
-      {id:2, nombre:'pepito', editable:1, calsXMin:22, usuario:2},
-      {id:3, nombre:'gomez', editable:0, calsXMin:9, usuario:3},
-      {id:4, nombre:'pepito', editable:1, calsXMin:22, usuario:2}
-  ],
+  data:null,
   categorias: [],
   modalInsertar: false,
   modalEliminar: false,
@@ -24,13 +20,13 @@ state={
   form:{
     id:'',
     nombre:'',
-    calsXMin:'',
-    usuario: '',
+    calPerMin:'',
+    user: '',
   }
 }
-// +{auth.username} en .get -> consulta por usuario o all (para las fijas)
-peticionGet=()=>{
-axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+// +{auth.username} en .get -> consulta por user o all (para las fijas)
+peticionGet= async () =>{
+ await axios.get("http://localhost:8081/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -38,8 +34,8 @@ axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).th
 }
 
 peticionPost=async()=>{
-this.state.form.usuario = this.state.username; // {auth.username}
-console.log(this.state.form)
+this.state.form.user = this.state.username; // {auth.username}
+//console.log(this.state.form)
   delete this.state.form.id;
  await axios.post(url,this.state.form).then(response=>{
     this.modalInsertar();
@@ -74,8 +70,8 @@ seleccionarcategoria=(categoria)=>{
     form: {
         id:categoria.id,
         nombre:categoria.nombre,
-        calsXMin:categoria.calsXMin,
-        usuario:this.state.username, // {auth.username}
+        calPerMin:categoria.calPerMin,
+        user:this.state.username, // {auth.username}
     }
   })
 }
@@ -92,30 +88,30 @@ await this.setState({
 }
 
   componentDidMount() {
+
     if (localStorage.jwtToken) {
           authToken(localStorage.jwtToken);
           var token = localStorage.jwtToken
-          console.log(localStorage.jwtToken);
+          //console.log(localStorage.jwtToken);
           var decoded = jwt_decode(token);
           this.state.username = decoded.sub;
-          this.state.form.usuario = decoded.sub;
+          this.state.form.user = decoded.sub;
     }
-  /*
-    if (localStorage.jwtToken) {
-      authToken(localStorage.jwtToken);
-    }
-    const auth = useSelector((state) => state.auth);
-    */
-    //this.peticionGet();
+    this.peticionGet();
   }
 
 
   render(){
     const {form}=this.state;
+    if (!this.state.data) {
+                return (
+                <div>No hay categorias</div>)
+    }
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
     <h2 style={{color: "white"}}>Categorias Fijas</h2>
   <br /><br />
+  {console.log(this.state.data)}
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
@@ -125,11 +121,11 @@ await this.setState({
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
         {this.state.data.map(categoria=>{
-        if (categoria.editable == 0){
+        if (categoria.is_editable == 'NOT_EDITABLE'){
           return(
             <tr>
           <td>{categoria.nombre}</td>
-          <td>{categoria.calsXMin}</td>
+          <td>{categoria.calPerMin}</td>
           </tr>
           )
         }})}
@@ -152,11 +148,11 @@ await this.setState({
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
         {this.state.data.map(categoria=>{
-        if (categoria.editable == 1){
+        if (categoria.is_editable == 'EDITABLE'){
           return(
             <tr>
           <td>{categoria.nombre}</td>
-          <td>{categoria.calsXMin}</td>
+          <td>{categoria.calPerMin}</td>
           <td>
                 <button className="btn btn-primary" onClick={()=>{this.seleccionarcategoria(categoria); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
@@ -178,8 +174,8 @@ await this.setState({
                     <label htmlFor="nombre">Nombre de la Categoria</label>
                     <input className="form-control" type="text" name="nombre" id="nombre" onChange={this.handleChange} value={form?form.nombre: ''}/>
                     <br />
-                    <label htmlFor="calsXMin">Calorias Por Minuto</label>
-                    <input className="form-control" type="number" name="calsXMin" id="calsXMin" onChange={this.handleChange} value={form?form.calsXMin: ''}/>
+                    <label htmlFor="calPerMin">Calorias Por Minuto</label>
+                    <input className="form-control" type="number" name="calPerMin" id="calPerMin" onChange={this.handleChange} value={form?form.calPerMin: ''}/>
                     <br />
                   </div>
                 </ModalBody>
