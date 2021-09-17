@@ -64,6 +64,7 @@ public class Application implements CommandLineRunner {
 			categoria3.setNombre("Remar");
 			categoria3.setUser(user2);
 			categoriaService.saveOrUpdate(categoria3);
+
 		}
 
 		if (entrenamientoService.findAll().isEmpty()) {
