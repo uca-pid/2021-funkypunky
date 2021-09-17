@@ -14,10 +14,7 @@ const url="";
 
 class Trainings extends Component {
 state={
-  data:[{id:1, categoria:'Pelopincho', descripcion:'123qa00000000000000sdasdasdas', fecha:'12/30/11', hora:'12:00', usuario:'asd', duracion:40, calorias:100,},
-  {id:2, categoria:'JuanCarlos', descripcion:'qwdfas1', fecha:'01/02/11', hora:'16:00', usuario:'pete', duracion:10, calorias:100,},
-  {id:3, categoria:'Carpincho', descripcion:'768asd', fecha:'05/05/17', hora:'19:00', usuario:'qqq', duracion:14, calorias:100, },
-  ],
+  data:null,
   categorias: [],
   modalInsertar: false,
   modalEliminar: false,
@@ -35,8 +32,9 @@ state={
 
 
 
-peticionGet=()=>{
-axios.get(url+this.state.username).then(response=>{
+peticionGet= async () =>{
+ await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+console.log(response.data);
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -106,7 +104,7 @@ await this.setState({
   if (localStorage.jwtToken) {
         authToken(localStorage.jwtToken);
         var token = localStorage.jwtToken
-        console.log(localStorage.jwtToken);
+        //console.log(localStorage.jwtToken);
         var decoded = jwt_decode(token);
         this.state.username = decoded.sub;
         this.state.form.usuario = decoded.sub;
@@ -117,11 +115,17 @@ await this.setState({
     }
     const auth = useSelector((state) => state.auth);
     */
-    //this.peticionGet();
+    this.peticionGet();
   }
 
   render(){
     const {form}=this.state;
+    console.log(this.state.data,1);
+        if (!this.state.data) {
+                    return (
+                    <div>No hay entrenamientos</div>)
+        }
+
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
 
@@ -142,13 +146,12 @@ await this.setState({
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
         {this.state.data.map(entrenamiento=>{
           return(
-            <tr key={entrenamiento.id}>
-          <td>{entrenamiento.categoria}</td>
-          <td>{entrenamiento.descripcion}</td>
-          <td>{entrenamiento.fecha}</td>
-          <td>{entrenamiento.hora}</td>
-          <td>{entrenamiento.duracion}</td>
-          <td>{entrenamiento.calorias}</td>
+          <tr key={entrenamiento.id}>
+          <td>{entrenamiento.categoria.nombre}</td>
+          <td>{entrenamiento.name}</td>
+          <td>{entrenamiento.startTime}</td>
+          <td>{entrenamiento.endTime}</td>
+          <td>{entrenamiento.categoria.calPerMin}</td>
           <td>
                 <button className="btn btn-primary" onClick={()=>{this.seleccionarentrenamiento(entrenamiento); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}

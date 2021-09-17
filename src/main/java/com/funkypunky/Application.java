@@ -58,15 +58,35 @@ public class Application implements CommandLineRunner {
 			user2.setPassword(new BCryptPasswordEncoder().encode("testadmin"));
 			userService.saveOrUpdate(user2);
 
+			Categoria categoria3 = new Categoria();
+			categoria3.setCalPerMin(80F);
+			categoria3.setIs_editable(Editable.EDITABLE);
+			categoria3.setNombre("Remar");
+			categoria3.setUser(user2);
+			categoriaService.saveOrUpdate(categoria3);
+
 		}
 
 		if (entrenamientoService.findAll().isEmpty()) {
 			Entrenamiento entrenamiento1 = new Entrenamiento();
 			User user = userService.findAll().stream().findFirst().get();
+
 			Categoria categoria = new Categoria();
 			categoria.setCalPerMin(10F);
 			categoria.setIs_editable(Editable.EDITABLE);
 			categoria.setNombre("Correr");
+			categoria.setUser(user);
+			categoriaService.saveOrUpdate(categoria);
+
+
+			Categoria categoria2 = new Categoria();
+			categoria2.setCalPerMin(5F);
+			categoria2.setIs_editable(Editable.NOT_EDITABLE);
+			categoria2.setNombre("Caminar");
+			categoria2.setUser(null);
+			categoriaService.saveOrUpdate(categoria2);
+
+
 
 			entrenamiento1.setCategoria(categoria);
 			entrenamiento1.setAssignedUser(user);
