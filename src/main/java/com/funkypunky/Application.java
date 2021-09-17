@@ -57,6 +57,7 @@ public class Application implements CommandLineRunner {
 			user2.setRole(roleService.findByName(ConstantUtils.ADMIN.toString()));
 			user2.setPassword(new BCryptPasswordEncoder().encode("testadmin"));
 			userService.saveOrUpdate(user2);
+
 		}
 
 		if (entrenamientoService.findAll().isEmpty()) {
