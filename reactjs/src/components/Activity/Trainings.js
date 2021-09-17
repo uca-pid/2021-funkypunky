@@ -33,7 +33,7 @@ state={
 
 
 peticionGet= async () =>{
- await axios.get("http://localhost:8081/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
 console.log(response.data);
   this.setState({data: response.data});
 }).catch(error=>{

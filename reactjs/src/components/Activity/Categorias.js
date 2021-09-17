@@ -26,7 +26,7 @@ state={
 }
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
- await axios.get("http://localhost:8081/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);
