@@ -34,8 +34,12 @@ state={
 
 peticionGet= async () =>{
  await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
-console.log(response.data);
   this.setState({data: response.data});
+}).catch(error=>{
+  console.log(error.message);
+})
+ await axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+  this.setState({categorias: response.data});
 }).catch(error=>{
   console.log(error.message);
 })
@@ -43,7 +47,7 @@ console.log(response.data);
 
 peticionPost=async()=>{
 this.state.form.usuario = this.state.username; // {auth.username}
-console.log(this.state.form)
+//console.log(this.state.form)
   delete this.state.form.id;
  await axios.post(url,this.state.form).then(response=>{
     this.modalInsertar();
@@ -54,7 +58,7 @@ console.log(this.state.form)
 }
 
 peticionPut=()=>{
-  console.log(this.state.form);
+  //console.log(this.state.form);
   axios.put(url+this.state.form.id, this.state.form).then(response=>{
       this.modalInsertar();
       this.peticionGet();
@@ -78,12 +82,12 @@ seleccionarentrenamiento=(entrenamiento)=>{
     form: {
         id:entrenamiento.id,
         usuario:this.state.username, // {auth.username}
-        descripcion:entrenamiento.descripcion,
-        categoria:entrenamiento.categoria,
-        fecha:entrenamiento.fecha,
-        hora:entrenamiento.hora,
+        descripcion:entrenamiento.name,
+        categoria:entrenamiento.categoria.nombre,
+        fecha:entrenamiento.startTime,
+        hora:entrenamiento.endTime,
         duracion:entrenamiento.duracion,
-        calorias: entrenamiento.calorias,
+        calorias: entrenamiento.categoria.calPerMin,
     }
   })
 }
@@ -100,7 +104,7 @@ await this.setState({
 }
 
 
-  componentDidMount() {
+  componentWillMount() {
   if (localStorage.jwtToken) {
         authToken(localStorage.jwtToken);
         var token = localStorage.jwtToken
@@ -109,22 +113,15 @@ await this.setState({
         this.state.username = decoded.sub;
         this.state.form.usuario = decoded.sub;
   }
-  /*
-    if (localStorage.jwtToken) {
-      authToken(localStorage.jwtToken);
-    }
-    const auth = useSelector((state) => state.auth);
-    */
     this.peticionGet();
   }
 
   render(){
     const {form}=this.state;
-    console.log(this.state.data,1);
-        if (!this.state.data) {
+        if (!this.state.data || !this.state.categorias) {
                     return (
-                    <div>No hay entrenamientos</div>)
-        }
+                    <div styl={{color: 'white'}}>No hay entrenamientos</div>)
+        }else{
 
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
@@ -150,7 +147,7 @@ await this.setState({
           <td>{entrenamiento.categoria.nombre}</td>
           <td>{entrenamiento.name}</td>
           <td>{entrenamiento.startTime}</td>
-          <td>{entrenamiento.endTime}</td>
+          <td>{entrenamiento.endTime }</td>
           <td>{entrenamiento.categoria.calPerMin}</td>
           <td>
                 <button className="btn btn-primary" onClick={()=>{this.seleccionarentrenamiento(entrenamiento); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
@@ -171,16 +168,17 @@ await this.setState({
                 <ModalBody>
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
-                    <input className="form-control" required type="text" name="categoria" id="categoria" onChange={this.handleChange} value={form?form.categoria: ''}/>
+                    <select className="form-control" name='categoria' id='categoria' required onChange={this.handleChange} value={form?form.categoria: ''}>
+                    {this.state.categorias.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                    ))}
+                    </select>
                     <br />
                     <label htmlFor="descripcion">Descripcion</label>
                     <input className="form-control" required type="text" name="descripcion" id="descripcion" maxLength="50" onChange={this.handleChange} value={form?form.descripcion: ''}/>
                     <br />
-                    <label htmlFor="fecha">Fecha</label>
-                    <input className="form-control" required type="date" name="fecha" id="fecha" onChange={this.handleChange} value={form?form.fecha: ''}/>
-                    <br />
-                    <label htmlFor="hora">Hora Inicio</label>
-                    <input className="form-control" required type="time" name="hora" id="hora" onChange={this.handleChange} value={form?form.hora:''}/>
+                    <label htmlFor="fecha">Fecha y Hora de Inicio</label>
+                    <input className="form-control" required type="datetime-local" name="fecha" id="fecha" onChange={this.handleChange} value={form?form.fecha: ''}/>
                     <br />
                     <label htmlFor="duracion">Duracion (en min.)</label>
                     <input className="form-control" required type="number" name="duracion" id="duracion" onChange={this.handleChange} value={form?form.duracion: ''}/>
@@ -195,7 +193,7 @@ await this.setState({
                   </button>: <button className="btn btn-primary" onClick={()=>this.peticionPut()}>
                     Actualizar
                   </button>
-  }
+                  }
                     <button className="btn btn-danger" onClick={()=>this.modalInsertar()}>Cancelar</button>
                 </ModalFooter>
           </Modal>
@@ -211,7 +209,7 @@ await this.setState({
             </ModalFooter>
           </Modal>
   </div>
-  );
+  );}
 }
 }
 export default Trainings;

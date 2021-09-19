@@ -13,7 +13,6 @@ const url="";
 class Trainings extends Component {
 state={
   data:null,
-  categorias: [],
   modalInsertar: false,
   modalEliminar: false,
   username: '',
@@ -37,7 +36,7 @@ peticionPost=async()=>{
 this.state.form.user = this.state.username; // {auth.username}
 //console.log(this.state.form)
   delete this.state.form.id;
- await axios.post(url,this.state.form).then(response=>{
+ await axios.post('/rest/categorias/agregarCategoria',this.state.form).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
