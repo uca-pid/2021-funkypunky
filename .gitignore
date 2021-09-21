@@ -33,3 +33,4 @@ build/
 .vscode/
 reactjs/node_modules/
 
+reactjs/.gitignore
