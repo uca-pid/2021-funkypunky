@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
+import {BASE_DEV_URL} from "../../utils/constants.js";
 
-const url="";
 
 
 class Trainings extends Component {
@@ -25,7 +25,7 @@ state={
 }
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
- await axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -34,9 +34,8 @@ peticionGet= async () =>{
 
 peticionPost=async()=>{
 this.state.form.user_mail = this.state.username; // {auth.username}
-  console.log(this.state.form)
   delete this.state.form.id;
- await axios.post('/rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
+ await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -45,15 +44,14 @@ this.state.form.user_mail = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
-console.log(this.state.form);
-  axios.post('/rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   })
 }
 
 peticionDelete=()=>{
-  axios.post('/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -83,7 +81,6 @@ await this.setState({
     [e.target.name]: e.target.value
   }
 });
-//console.log(this.state.form);
 }
 
   componentDidMount() {
@@ -91,7 +88,6 @@ await this.setState({
     if (localStorage.jwtToken) {
           authToken(localStorage.jwtToken);
           var token = localStorage.jwtToken
-          //console.log(localStorage.jwtToken);
           var decoded = jwt_decode(token);
           this.state.username = decoded.sub;
           this.state.form.user_mail = decoded.sub;
@@ -110,7 +106,6 @@ await this.setState({
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
     <h2 style={{color: "white"}}>Categorias Fijas</h2>
   <br /><br />
-  {console.log(this.state.data)}
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>

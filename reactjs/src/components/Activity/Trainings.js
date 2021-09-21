@@ -7,9 +7,8 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
+import {BASE_DEV_URL} from "../../utils/constants.js";
 
-
-const url="";
 
 // {auth.username}`
 
@@ -34,13 +33,12 @@ state={
 
 
 peticionGet= async () =>{
- await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
-  console.log(this.state.data)
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({categorias: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -49,9 +47,8 @@ peticionGet= async () =>{
 
 peticionPost=async()=>{
 this.state.form.usuario = this.state.username; // {auth.username}
-console.log(this.state.form)
   delete this.state.form.id;
- await axios.post('/rest/entrenamiento/agregarEntrenamiento',{'id_categoria':parseInt(this.state.form.categoria),
+ await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria':parseInt(this.state.form.categoria),
                                                               'descripcion':this.state.form.description,
                                                               'duracion':parseInt(this.state.form.duracion),
                                                               'usuario': this.state.username,
@@ -64,8 +61,7 @@ console.log(this.state.form)
 }
 
 peticionPut=()=>{
-  console.log(this.state.form);
-  axios.post('/rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
                                                          'id_categoria':parseInt(this.state.form.categoria),
                                                          'descripcion':this.state.form.description,
                                                          'duracion':parseInt(this.state.form.duracion),
@@ -77,7 +73,7 @@ peticionPut=()=>{
 }
 
 peticionDelete=()=>{
-  axios.post('/rest/entrenamiento/eliminarEntrenamiento'+{'id':this.state.form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento'+{'id':this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -111,7 +107,7 @@ await this.setState({
     [e.target.name]: e.target.value
   }
 });
-//console.log(this.state.form);
+
 }
 
 
@@ -119,7 +115,6 @@ await this.setState({
   if (localStorage.jwtToken) {
         authToken(localStorage.jwtToken);
         var token = localStorage.jwtToken
-        //console.log(localStorage.jwtToken);
         var decoded = jwt_decode(token);
         this.state.username = decoded.sub;
         this.state.form.usuario = decoded.sub;
