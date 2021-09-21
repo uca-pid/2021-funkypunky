@@ -2,8 +2,10 @@ package com.funkypunky.resource.impl;
 
 import com.funkypunky.domain.Categoria;
 import com.funkypunky.domain.Editable;
+import com.funkypunky.domain.Entrenamiento;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.CategoriaRepository;
+import com.funkypunky.repository.EntrenamientoRepository;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.UserServiceImpl;
 import com.funkypunky.utils.ConstantUtils;
@@ -18,7 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/categorias")
@@ -36,6 +40,9 @@ public class CategoriaResourceImpl {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
+	@Autowired
+	private EntrenamientoRepository entrenamientoRepository;
+
 	@GetMapping("/categoriaByUser")
 	@ResponseBody
 	public Collection<Categoria> getCategoriaByuser(@RequestParam String user_email) {
@@ -47,7 +54,7 @@ public class CategoriaResourceImpl {
 	}
 
 	@PostMapping(value = "/agregarCategoria", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> register(@RequestParam String user_mail,
+	public ResponseEntity<String> agregarCategoria(@RequestParam String user_mail,
 										   @RequestParam Float calPerMin,
 										   @RequestParam String nombre) {
 		JSONObject jsonObject = new JSONObject();
@@ -77,9 +84,9 @@ public class CategoriaResourceImpl {
 
 
 	@PostMapping(value = "/editarCategoria", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> register(	@RequestParam Long id,
-										   	@RequestParam Float calPerMin,
-										   	@RequestParam String nombre) {
+	public ResponseEntity<String> editarCategoria(	@RequestParam Long id,
+										   			@RequestParam Float calPerMin,
+										   			@RequestParam String nombre) {
 		JSONObject jsonObject = new JSONObject();
 		if(!categoriaService.findById(id).isPresent()){
 			return new ResponseEntity<>("Categoria does not exist", HttpStatus.BAD_REQUEST);
@@ -108,11 +115,12 @@ public class CategoriaResourceImpl {
 		}
 	}
 
-	@PostMapping(value = "/eliminarCategoria", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> register(	@RequestParam Long id) {
+	@PostMapping(value = "/eliminarCategoria", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> eliminarCategoria(@RequestBody Map<String, Object> payload) {
+		Long id = new Long((Integer) payload.get("id"));
 		JSONObject jsonObject = new JSONObject();
 		if(!categoriaService.findById(id).isPresent()){
-			return new ResponseEntity<>("Categoria does not exist", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Categoria with ID "+ id +" does not exist", HttpStatus.BAD_REQUEST);
 		}
 
 		try {
@@ -121,8 +129,9 @@ public class CategoriaResourceImpl {
 			if(categoria.getIs_editable().equals(Editable.NOT_EDITABLE)){
 				return new ResponseEntity<>("La categoria no es editable", HttpStatus.NOT_ACCEPTABLE);
 			}
-
+			entrenamientoRepository.deleteByCategoria(categoria);
 			categoriaRepository.deleteById(id);
+
 			jsonObject.put("message", "Categoria deleted succesfully");
 			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
 		} catch (JSONException e) {
@@ -134,5 +143,6 @@ public class CategoriaResourceImpl {
 			return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
 		}
 	}
+
 	
 }
