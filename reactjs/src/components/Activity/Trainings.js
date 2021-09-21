@@ -7,8 +7,9 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
-import {BASE_DEV_URL} from "../../utils/constants.js";
 
+
+const url="";
 
 // {auth.username}`
 
@@ -22,7 +23,7 @@ state={
   form:{
     id:'',
     usuario: '', // {auth.username}
-    description:'',
+    descripcion:'',
     categoria:'',
     fecha:'',
     hora:'',
@@ -33,12 +34,13 @@ state={
 
 
 peticionGet= async () =>{
- await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("https://funky-punky-web-app.herokuapp.com/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
+  console.log(this.state.data)
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({categorias: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -47,12 +49,9 @@ peticionGet= async () =>{
 
 peticionPost=async()=>{
 this.state.form.usuario = this.state.username; // {auth.username}
+//console.log(this.state.form)
   delete this.state.form.id;
- await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria':parseInt(this.state.form.categoria),
-                                                              'descripcion':this.state.form.description,
-                                                              'duracion':parseInt(this.state.form.duracion),
-                                                              'usuario': this.state.username,
-                                                              'fecha':this.state.form.fecha}).then(response=>{
+ await axios.post(url,this.state.form).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -61,19 +60,15 @@ this.state.form.usuario = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
-                                                         'id_categoria':parseInt(this.state.form.categoria),
-                                                         'descripcion':this.state.form.description,
-                                                         'duracion':parseInt(this.state.form.duracion),
-                                                         'usuario': this.state.username,
-                                                         'fecha':this.state.form.fecha,}).then(response=>{
+  //console.log(this.state.form);
+  axios.put(url+this.state.form.id, this.state.form).then(response=>{
       this.modalInsertar();
       this.peticionGet();
     })
 }
 
 peticionDelete=()=>{
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento'+{'id':this.state.form.id}).then(response=>{
+  axios.delete(url+this.state.form.id).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -89,8 +84,8 @@ seleccionarentrenamiento=(entrenamiento)=>{
     form: {
         id:entrenamiento.id,
         usuario:this.state.username, // {auth.username}
-        description:entrenamiento.description,
-        categoria:entrenamiento.categoria.id,
+        descripcion:entrenamiento.name,
+        categoria:entrenamiento.categoria.nombre,
         fecha:entrenamiento.startTime,
         hora:entrenamiento.endTime,
         duracion:entrenamiento.duracion,
@@ -107,7 +102,7 @@ await this.setState({
     [e.target.name]: e.target.value
   }
 });
-
+//console.log(this.state.form);
 }
 
 
@@ -115,6 +110,7 @@ await this.setState({
   if (localStorage.jwtToken) {
         authToken(localStorage.jwtToken);
         var token = localStorage.jwtToken
+        //console.log(localStorage.jwtToken);
         var decoded = jwt_decode(token);
         this.state.username = decoded.sub;
         this.state.form.usuario = decoded.sub;
@@ -138,7 +134,7 @@ await this.setState({
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
           <th>Categoria</th>
-          <th>description</th>
+          <th>Descripcion</th>
           <th>Fecha y Hora de Inicio</th>
           <th>Duracion (min)</th>
           <th>Calorias Quemadas</th>
@@ -174,14 +170,13 @@ await this.setState({
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={this.handleChange} value={form?form.categoria: ''}>
-                    <option disable>  </option>
                     {this.state.categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
                     <br />
-                    <label htmlFor="description">Descripcion</label>
-                    <input className="form-control" required type="text" name="description" id="description" maxLength="50" onChange={this.handleChange} value={form?form.description: ''}/>
+                    <label htmlFor="descripcion">Descripcion</label>
+                    <input className="form-control" required type="text" name="descripcion" id="descripcion" maxLength="50" onChange={this.handleChange} value={form?form.descripcion: ''}/>
                     <br />
                     <label htmlFor="fecha">Fecha y Hora de Inicio</label>
                     <input className="form-control" required type="datetime-local" name="fecha" id="fecha" onChange={this.handleChange} value={form?form.fecha: ''}/>

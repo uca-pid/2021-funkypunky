@@ -1,14 +1,8 @@
 import * as UT from "./userTypes";
 import axios from "axios";
-import {BASE_DEV_URL} from "../../utils/constants.js";
 
-<<<<<<< HEAD
-const REGISTER_URL = "http://localhost:8080/rest/user/register";
-const UPDATE_PW_URL = "http://localhost:8080/rest/user/updateUserPw";
-=======
-const REGISTER_URL = BASE_DEV_URL + "rest/user/register";
-const UPDATE_PW_URL = BASE_DEV_URL + "rest/user/updateUserPw";
->>>>>>> feature/unirBackYFront
+const REGISTER_URL = "rest/user/register";
+const UPDATE_PW_URL = "rest/user/updateUserPw";
 
 export const fetchUsers = () => {
   return (dispatch) => {
