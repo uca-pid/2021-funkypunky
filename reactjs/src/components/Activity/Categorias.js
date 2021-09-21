@@ -20,7 +20,7 @@ state={
     id:'',
     nombre:'',
     calPerMin:'',
-    user: '',
+    user_mail: '',
   }
 }
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
@@ -33,10 +33,10 @@ peticionGet= async () =>{
 }
 
 peticionPost=async()=>{
-this.state.form.user = this.state.username; // {auth.username}
-//console.log(this.state.form)
+this.state.form.user_mail = this.state.username; // {auth.username}
+  console.log(this.state.form)
   delete this.state.form.id;
- await axios.post('/rest/categorias/agregarCategoria',this.state.form).then(response=>{
+ await axios.post('/rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -46,14 +46,14 @@ this.state.form.user = this.state.username; // {auth.username}
 
 peticionPut=()=>{
 console.log(this.state.form);
-  axios.put(url+this.state.form.id, this.state.form).then(response=>{
+  axios.post('/rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   })
 }
 
 peticionDelete=()=>{
-  axios.post('http://localhost:8080/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
+  axios.post('/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -70,7 +70,7 @@ seleccionarcategoria=(categoria)=>{
         id:categoria.id,
         nombre:categoria.nombre,
         calPerMin:categoria.calPerMin,
-        user:this.state.username, // {auth.username}
+        user_mail:this.state.username, // {auth.username}
     }
   })
 }
@@ -94,7 +94,7 @@ await this.setState({
           //console.log(localStorage.jwtToken);
           var decoded = jwt_decode(token);
           this.state.username = decoded.sub;
-          this.state.form.user = decoded.sub;
+          this.state.form.user_mail = decoded.sub;
     }
     this.peticionGet();
   }

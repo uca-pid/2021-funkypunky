@@ -119,7 +119,7 @@ public class EntrenamientoResourceImpl {
 		String descripcion = (String) payload.get("descripcion");
 		Integer duracion = (Integer) payload.get("duracion");
 		String usuario = (String) payload.get("usuario");
-		Timestamp start_date = Timestamp.valueOf((String) payload.get("fecha"));
+		Timestamp start_date = Timestamp.valueOf(((String) payload.get("fecha")).replace('T',' '));
 
 		if(!userService.findByEmail(usuario).isPresent()){
 			return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);

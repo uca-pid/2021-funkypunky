@@ -23,7 +23,7 @@ state={
   form:{
     id:'',
     usuario: '', // {auth.username}
-    descripcion:'',
+    description:'',
     categoria:'',
     fecha:'',
     hora:'',
@@ -49,9 +49,13 @@ peticionGet= async () =>{
 
 peticionPost=async()=>{
 this.state.form.usuario = this.state.username; // {auth.username}
-//console.log(this.state.form)
+console.log(this.state.form)
   delete this.state.form.id;
- await axios.post(url,this.state.form).then(response=>{
+ await axios.post('/rest/entrenamiento/agregarEntrenamiento',{'id_categoria':parseInt(this.state.form.categoria),
+                                                              'descripcion':this.state.form.description,
+                                                              'duracion':parseInt(this.state.form.duracion),
+                                                              'usuario': this.state.username,
+                                                              'fecha':this.state.form.fecha}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -60,15 +64,20 @@ this.state.form.usuario = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
-  //console.log(this.state.form);
-  axios.put(url+this.state.form.id, this.state.form).then(response=>{
+  console.log(this.state.form);
+  axios.post('/rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
+                                                         'id_categoria':parseInt(this.state.form.categoria),
+                                                         'descripcion':this.state.form.description,
+                                                         'duracion':parseInt(this.state.form.duracion),
+                                                         'usuario': this.state.username,
+                                                         'fecha':this.state.form.fecha,}).then(response=>{
       this.modalInsertar();
       this.peticionGet();
     })
 }
 
 peticionDelete=()=>{
-  axios.delete(url+this.state.form.id).then(response=>{
+  axios.post('/rest/entrenamiento/eliminarEntrenamiento'+{'id':this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -84,8 +93,8 @@ seleccionarentrenamiento=(entrenamiento)=>{
     form: {
         id:entrenamiento.id,
         usuario:this.state.username, // {auth.username}
-        descripcion:entrenamiento.name,
-        categoria:entrenamiento.categoria.nombre,
+        description:entrenamiento.description,
+        categoria:entrenamiento.categoria.id,
         fecha:entrenamiento.startTime,
         hora:entrenamiento.endTime,
         duracion:entrenamiento.duracion,
@@ -134,7 +143,7 @@ await this.setState({
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
           <th>Categoria</th>
-          <th>Descripcion</th>
+          <th>description</th>
           <th>Fecha y Hora de Inicio</th>
           <th>Duracion (min)</th>
           <th>Calorias Quemadas</th>
@@ -170,13 +179,14 @@ await this.setState({
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={this.handleChange} value={form?form.categoria: ''}>
+                    <option disable>  </option>
                     {this.state.categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
                     <br />
-                    <label htmlFor="descripcion">Descripcion</label>
-                    <input className="form-control" required type="text" name="descripcion" id="descripcion" maxLength="50" onChange={this.handleChange} value={form?form.descripcion: ''}/>
+                    <label htmlFor="description">Descripcion</label>
+                    <input className="form-control" required type="text" name="description" id="description" maxLength="50" onChange={this.handleChange} value={form?form.description: ''}/>
                     <br />
                     <label htmlFor="fecha">Fecha y Hora de Inicio</label>
                     <input className="form-control" required type="datetime-local" name="fecha" id="fecha" onChange={this.handleChange} value={form?form.fecha: ''}/>
