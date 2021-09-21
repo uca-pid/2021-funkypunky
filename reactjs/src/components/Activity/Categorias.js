@@ -53,7 +53,7 @@ console.log(this.state.form);
 }
 
 peticionDelete=()=>{
-  axios.delete(url+this.state.form.id).then(response=>{
+  axios.post('http://localhost:8080/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -104,7 +104,7 @@ await this.setState({
     const {form}=this.state;
     if (!this.state.data) {
                 return (
-                <div>No hay categorias</div>)
+                <div style={{color: 'white'}}>Debe iniciar sesion para ver sus categorias.</div>)
     }
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>

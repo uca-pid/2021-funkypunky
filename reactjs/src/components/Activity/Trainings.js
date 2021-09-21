@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
+import Timestamp from 'react-timestamp'
 
 
 const url="";
@@ -35,6 +36,7 @@ state={
 peticionGet= async () =>{
  await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
+  console.log(this.state.data)
 }).catch(error=>{
   console.log(error.message);
 })
@@ -120,7 +122,7 @@ await this.setState({
     const {form}=this.state;
         if (!this.state.data || !this.state.categorias) {
                     return (
-                    <div styl={{color: 'white'}}>No hay entrenamientos</div>)
+                    <div style={{color: 'white'}}>Debe iniciar sesion para ver sus entrenamientos.</div>)
         }else{
 
   return (
@@ -133,8 +135,7 @@ await this.setState({
         <tr>
           <th>Categoria</th>
           <th>Descripcion</th>
-          <th>Fecha</th>
-          <th>Hora Inicio</th>
+          <th>Fecha y Hora de Inicio</th>
           <th>Duracion (min)</th>
           <th>Calorias Quemadas</th>
           <th> </th>
@@ -145,10 +146,10 @@ await this.setState({
           return(
           <tr key={entrenamiento.id}>
           <td>{entrenamiento.categoria.nombre}</td>
-          <td>{entrenamiento.name}</td>
-          <td>{entrenamiento.startTime}</td>
-          <td>{entrenamiento.endTime }</td>
-          <td>{entrenamiento.categoria.calPerMin}</td>
+          <td>{entrenamiento.description}</td>
+          <td><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
+          <td>{entrenamiento.duracion}</td>
+          <td>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
           <td>
                 <button className="btn btn-primary" onClick={()=>{this.seleccionarentrenamiento(entrenamiento); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
