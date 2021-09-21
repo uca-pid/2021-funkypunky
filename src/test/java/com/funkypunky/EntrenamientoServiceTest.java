@@ -74,7 +74,7 @@ public class EntrenamientoServiceTest {
 
         categoria = new Categoria(100L, "Correr", 14.5F,user,Editable.EDITABLE);
 
-        entrenamiento = new Entrenamiento(1L,"Prueba correr", user,categoria,new Timestamp(1234), new Timestamp(5678),new Interval(new Timestamp(1234).getNanos(),new Timestamp(5678).getNanos()));
+        entrenamiento = new Entrenamiento(1L,"Prueba correr", user,categoria,new Timestamp(1234),100);
     }
 
     @Test

@@ -17,24 +17,21 @@ public class Entrenamiento {
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	private String description;
 
 	@ManyToOne
 	@JoinColumn (name = "user_id", nullable = false)
 	private User assignedUser;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn (name = "category_id", nullable = false)
 	private Categoria categoria;
 
 	@Column(nullable = false)
 	private Timestamp startTime;
 
-	@Column(nullable = false)
-	private Timestamp endTime;
-
-	@Transient
-	private Interval interval;
+	@Column
+	private Integer duracion;
 
 	public Entrenamiento() {
 	}

@@ -88,11 +88,11 @@ public class Application implements CommandLineRunner {
 
 
 
-			entrenamiento1.setCategoria(categoria);
+			entrenamiento1.setCategoria(categoria2);
 			entrenamiento1.setAssignedUser(user);
 			entrenamiento1.setStartTime(new Timestamp(12344));
-			entrenamiento1.setEndTime(new Timestamp(16666));
-			entrenamiento1.setName("Lagos con agus el martes");
+			entrenamiento1.setDuracion(120);
+			entrenamiento1.setDescription("Lagos con agus el martes");
 
 			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
