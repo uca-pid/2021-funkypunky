@@ -7,11 +7,9 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
-
+import {BASE_DEV_URL} from "../../utils/constants";
 
 const url="";
-
-// {auth.username}`
 
 class Trainings extends Component {
 state={
@@ -34,13 +32,13 @@ state={
 
 
 peticionGet= async () =>{
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
   console.log(this.state.data)
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get( BASE_DEV_URL + "https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({categorias: response.data});
 }).catch(error=>{
   console.log(error.message);

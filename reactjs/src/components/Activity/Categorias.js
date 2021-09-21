@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
+import {BASE_DEV_URL} from "../../utils/constants";
 
 const url="";
 
@@ -25,7 +26,7 @@ state={
 }
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -36,7 +37,7 @@ peticionPost=async()=>{
 this.state.form.user = this.state.username; // {auth.username}
 //console.log(this.state.form)
   delete this.state.form.id;
- await axios.post('https://funky-punky-web-app.herokuapp.com/rest/categorias/agregarCategoria',this.state.form).then(response=>{
+ await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',this.state.form).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -53,7 +54,7 @@ console.log(this.state.form);
 }
 
 peticionDelete=()=>{
-  axios.post('https://funky-punky-web-app.herokuapp.com/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
