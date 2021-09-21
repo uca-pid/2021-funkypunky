@@ -8,7 +8,6 @@ import com.funkypunky.repository.CategoriaRepository;
 import com.funkypunky.repository.EntrenamientoRepository;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.UserServiceImpl;
-import com.funkypunky.utils.ConstantUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
@@ -54,9 +53,12 @@ public class CategoriaResourceImpl {
 	}
 
 	@PostMapping(value = "/agregarCategoria", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> agregarCategoria(@RequestParam String user_mail,
-										   @RequestParam Float calPerMin,
-										   @RequestParam String nombre) {
+	public ResponseEntity<String> agregarCategoria(@RequestBody Map<String, Object> payload) {
+
+		String user_mail = (String) payload.get("user_mail");
+		Float calPerMin = new Float((Integer) payload.get("calPerMin"));
+		String nombre = (String) payload.get("nombre");
+
 		JSONObject jsonObject = new JSONObject();
 		if(!userService.findByEmail(user_mail).isPresent()){
 			return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
@@ -84,10 +86,13 @@ public class CategoriaResourceImpl {
 
 
 	@PostMapping(value = "/editarCategoria", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> editarCategoria(	@RequestParam Long id,
-										   			@RequestParam Float calPerMin,
-										   			@RequestParam String nombre) {
+	public ResponseEntity<String> editarCategoria(@RequestBody Map<String, Object> payload) {
 		JSONObject jsonObject = new JSONObject();
+
+		Long id = new Long((Integer) payload.get("id"));
+		Float calPerMin = new Float((Integer) payload.get("calPerMin"));
+		String nombre = (String) payload.get("nombre");
+
 		if(!categoriaService.findById(id).isPresent()){
 			return new ResponseEntity<>("Categoria does not exist", HttpStatus.BAD_REQUEST);
 		}
