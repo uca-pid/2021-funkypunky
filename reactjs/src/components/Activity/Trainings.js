@@ -126,7 +126,7 @@ await this.setState({
     const {form}=this.state;
         if (!this.state.data || !this.state.categorias) {
                     return (
-                    <div style={{color: 'white'}}>Debe iniciar sesion para ver sus entrenamientos.</div>)
+                    <div style={{color: 'white'}}>Cargando datos...</div>)
         }else{
 
   return (
@@ -138,7 +138,7 @@ await this.setState({
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
           <th>Categoria</th>
-          <th>description</th>
+          <th>Descripcion</th>
           <th>Fecha y Hora de Inicio</th>
           <th>Duracion (min)</th>
           <th>Calorias Quemadas</th>
@@ -207,7 +207,7 @@ await this.setState({
 
           <Modal isOpen={this.state.modalEliminar}>
             <ModalBody>
-               Estás seguro que deseas eliminar a la entrenamiento {form && form.categoria}
+               Estás seguro que deseas eliminar al entrenamiento {form && form.description}
             </ModalBody>
             <ModalFooter>
               <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>

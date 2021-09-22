@@ -7,6 +7,7 @@ import {
   faUserPlus,
   faSignInAlt,
   faSignOutAlt,
+  faChild,
 } from "@fortawesome/free-solid-svg-icons";
 import { logoutUser } from "../services/index";
 
@@ -39,6 +40,11 @@ const NavigationBar = () => {
         </Link>
         <Link to={"categorias"} className="nav-link">
             Categorias
+        </Link>
+      </Nav>
+      <Nav className="navbar-right">
+        <Link to={"changePassword"} className="nav-link" >
+          <FontAwesomeIcon icon={faChild} /> Cambiar Contraseña
         </Link>
       </Nav>
       <Nav className="navbar-right">
