@@ -8,8 +8,6 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import {BASE_DEV_URL} from "../../utils/constants.js";
 
-
-
 class Trainings extends Component {
 state={
   data:null,
@@ -23,6 +21,7 @@ state={
     user_mail: '',
   }
 }
+
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
@@ -94,6 +93,7 @@ await this.setState({
     }
     this.peticionGet();
   }
+
 
 
   render(){
