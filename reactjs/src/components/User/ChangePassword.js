@@ -9,11 +9,15 @@ import {
   Button,
   Alert,
 } from "react-bootstrap";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const ChangePassword = () => {
   if (localStorage.jwtToken) {
     authToken(localStorage.jwtToken);
   }
+
+  const MySwal = withReactContent(Swal);
 
   const auth = useSelector((state) => state.auth);
 
@@ -29,7 +33,8 @@ const ChangePassword = () => {
   const changePassword = async () =>{
   console.log({'username': username, 'password': inputValue})
    await axios.post(BASE_DEV_URL + 'rest/user/changeUserPw', {'username': username, 'password': inputValue}).then(response=>{
-    console.log('asd')
+    return MySwal.fire('Se ha modificado correctamente')
+
   }).catch(error=>{
     console.log(error.message);
   })
@@ -43,7 +48,7 @@ const ChangePassword = () => {
       <FormControl
         required
         autoComplete="off"
-        type="text"
+        type="password"
         name="email"
         value={inputValue}
         onChange={onChangeHandler}

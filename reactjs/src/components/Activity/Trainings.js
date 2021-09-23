@@ -61,6 +61,7 @@ this.state.form.usuario = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
+console.log(this.state.form)
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
                                                          'id_categoria':parseInt(this.state.form.categoria),
                                                          'descripcion':this.state.form.description,
@@ -73,7 +74,8 @@ peticionPut=()=>{
 }
 
 peticionDelete=()=>{
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento'+{'id':this.state.form.id}).then(response=>{
+  console.log(this.state.form.id)
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento',{'id':this.state.form.id}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
