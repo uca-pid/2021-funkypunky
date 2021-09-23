@@ -1,116 +1,101 @@
 import authToken from "../../utils/authToken";
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
+import CategoriesSelector from './CategoriesSelector.js';
 
-const url="";
+const Trainings = () => {
 
+const [data, setData] = useState(null);
+//const [categorias, setCategorias] = useState([]);
+const [modalInsertar, setModalInsertar] = useState(false);
+const [modalEliminar, setModalEliminar] = useState(false);
+const [username, setUsername] = useState('');
+const [form, setForm] = useState({id:'', nombre:'', calPerMin:'', user: '' })
+const [tipoModal, setTipoModal] = useState();
 
-class Trainings extends Component {
-state={
-  data:null,
-  modalInsertar: false,
-  modalEliminar: false,
-  username: '',
-  form:{
-    id:'',
-    nombre:'',
-    calPerMin:'',
-    user: '',
-  }
-}
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
-peticionGet= async () =>{
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
-  this.setState({data: response.data});
-}).catch(error=>{
+const peticionGet = async () => {
+ await axios.get("/rest/categorias/categoriaByUser?user_email=" + username).then(response =>
+  setData(response.data)).catch(error=>{
   console.log(error.message);
-})
-}
+})}
 
-peticionPost=async()=>{
-this.state.form.user = this.state.username; // {auth.username}
-//console.log(this.state.form)
-  delete this.state.form.id;
- await axios.post('https://funky-punky-web-app.herokuapp.com/rest/categorias/agregarCategoria',this.state.form).then(response=>{
-    this.modalInsertar();
-    this.peticionGet();
-  }).catch(error=>{
+const peticionPost = async () => {
+setForm({ ...form, user: username}); // {auth.username}
+  delete form.id;
+ await axios.post("/rest/categorias/agregarCategoria", form).then(response=>{
+    setModalInsertar(!modalInsertar);
+    peticionGet();
+  }).catch(error => {
     console.log(error.message);
   })
 }
 
-peticionPut=()=>{
-console.log(this.state.form);
-  axios.put(url+this.state.form.id, this.state.form).then(response=>{
-    this.modalInsertar();
-    this.peticionGet();
+const peticionPut = () => {
+  axios.put(form.id, form).then(response=>{
+    setModalInsertar(!modalInsertar);
+    peticionGet();
   })
 }
 
-peticionDelete=()=>{
-  axios.post('https://funky-punky-web-app.herokuapp.com/rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
-    this.setState({modalEliminar: false});
-    this.peticionGet();
+const peticionDelete = () => {
+  axios.delete("/rest/categorias/eliminarCategoria", form.id).then(response=>{
+    setModalEliminar(false);
+    peticionGet();
   })
 }
 
-modalInsertar=()=>{
-  this.setState({modalInsertar: !this.state.modalInsertar});
-}
+const seleccionarCategoria = categoria => {
+  setTipoModal('actualizar');
+  setForm({ id: categoria.id, nombre: categoria.nombre, calPerMin: categoria.calPerMin, user: username /*{auth.username}*/});
+  };
 
-seleccionarcategoria=(categoria)=>{
-  this.setState({
-    tipoModal: 'actualizar',
-    form: {
-        id:categoria.id,
-        nombre:categoria.nombre,
-        calPerMin:categoria.calPerMin,
-        user:this.state.username, // {auth.username}
-    }
-  })
-}
-
-handleChange=async e=>{
+const handleChange = async e => {
 e.persist();
-await this.setState({
-  form:{
-    ...this.state.form,
+setForm({
+    ...form,
     [e.target.name]: e.target.value
-  }
-});
-//console.log(this.state.form);
+  });
 }
 
-  componentDidMount() {
-
-    if (localStorage.jwtToken) {
+ useEffect(() => {
+    if (localStorage && localStorage.jwtToken) {
           authToken(localStorage.jwtToken);
           var token = localStorage.jwtToken
-          //console.log(localStorage.jwtToken);
           var decoded = jwt_decode(token);
-          this.state.username = decoded.sub;
-          this.state.form.user = decoded.sub;
+          setUsername(decoded.sub);
+          setForm({ ...form, user: decoded.sub});
     }
-    this.peticionGet();
-  }
+    peticionGet();
+    //console.log(categorias, 'categorias')
+  }, [form, peticionGet]);
 
+const handleAgregarCategoria = () => {
+setForm({form: null, tipoModal: 'insertar'});
+setModalInsertar(!modalInsertar);
+}
 
-  render(){
-    const {form}=this.state;
-    if (!this.state.data) {
-                return (
-                <div style={{color: 'white'}}>Debe iniciar sesion para ver sus categorias.</div>)
-    }
-  return (
+const handleEliminarCategoria = categoria => {
+seleccionarCategoria(categoria);
+setModalEliminar(true);
+}
+
+const handleModificarCategoria = categoria => {
+seleccionarCategoria(categoria);
+setModalInsertar(!modalInsertar);
+}
+
+  return data ?
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
     <h2 style={{color: "white"}}>Categorias Fijas</h2>
+    <CategoriesSelector />
   <br /><br />
-  {console.log(this.state.data)}
+  {console.log(data, 'data')}
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
@@ -119,8 +104,8 @@ await this.setState({
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
-        {this.state.data.map(categoria=>{
-        if (categoria.is_editable == 'NOT_EDITABLE'){
+        {data.map(categoria=>{
+        if (categoria.is_editable === 'NOT_EDITABLE'){
           return(
             <tr>
           <td>{categoria.nombre}</td>
@@ -135,7 +120,7 @@ await this.setState({
 
     <h2 style={{color: "white"}}>Categorias Personalizadas</h2>
     <br />
-    <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Categoria</button>
+    <button className="btn btn-success" onClick={handleAgregarCategoria}>Agregar Categoria</button>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -146,63 +131,57 @@ await this.setState({
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
-        {this.state.data.map(categoria=>{
-        if (categoria.is_editable == 'EDITABLE'){
+        {data.map(categoria =>{
+        if (categoria.is_editable === 'EDITABLE'){
           return(
             <tr>
           <td>{categoria.nombre}</td>
           <td>{categoria.calPerMin}</td>
           <td>
-                <button className="btn btn-primary" onClick={()=>{this.seleccionarcategoria(categoria); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
+                <button className="btn btn-primary" onClick={handleModificarCategoria(categoria)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
-                <button className="btn btn-danger" onClick={()=>{this.seleccionarcategoria(categoria); this.setState({modalEliminar: true})}}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                <button className="btn btn-danger" onClick={handleEliminarCategoria(categoria)}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
           </tr>
           )
         }})}
       </tbody>
     </table>
-
-
-    <Modal isOpen={this.state.modalInsertar}>
+    <Modal isOpen={modalInsertar}>
                 <ModalHeader style={{display: 'block'}}>
-                  <span style={{float: 'right'}} onClick={()=>this.modalInsertar()}>x</span>
+                  <span style={{float: 'right'}} onClick={()=>  setModalInsertar(!modalInsertar)}>x</span>
                 </ModalHeader>
                 <ModalBody>
                   <div className="form-group">
                     <label htmlFor="nombre">Nombre de la Categoria</label>
-                    <input className="form-control" type="text" name="nombre" id="nombre" onChange={this.handleChange} value={form?form.nombre: ''}/>
+                    <input className="form-control" type="text" name="nombre" id="nombre" onChange={handleChange} value={form?form.nombre: ''}/>
                     <br />
                     <label htmlFor="calPerMin">Calorias Por Minuto</label>
-                    <input className="form-control" type="number" name="calPerMin" id="calPerMin" onChange={this.handleChange} value={form?form.calPerMin: ''}/>
+                    <input className="form-control" type="number" name="calPerMin" id="calPerMin" onChange={handleChange} value={form ? form.calPerMin : ''}/>
                     <br />
                   </div>
                 </ModalBody>
-
                 <ModalFooter>
-                  {this.state.tipoModal=='insertar'?
-                    <button className="btn btn-success" onClick={()=>this.peticionPost()}>
+                  {tipoModal ==='insertar'?
+                    <button className="btn btn-success" onClick={()=> peticionPost()}>
                     Insertar
-                  </button>: <button className="btn btn-primary" onClick={()=>this.peticionPut()}>
+                  </button>: <button className="btn btn-primary" onClick={()=> peticionPut()}>
                     Actualizar
                   </button>
-  }
-                    <button className="btn btn-danger" onClick={()=>this.modalInsertar()}>Cancelar</button>
+                    }
+                    <button className="btn btn-danger" onClick={()=>  setModalInsertar(!modalInsertar)}>Cancelar</button>
                 </ModalFooter>
           </Modal>
-
-
-          <Modal isOpen={this.state.modalEliminar}>
+          <Modal isOpen={modalEliminar}>
             <ModalBody>
                Estás seguro que deseas eliminar a la categoria {form && form.nombre}
             </ModalBody>
             <ModalFooter>
-              <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>
-              <button className="btn btn-secundary" onClick={()=>this.setState({modalEliminar: false})}>No</button>
+              <button className="btn btn-danger" onClick={()=> peticionDelete()}>Sí</button>
+              <button className="btn btn-secundary" onClick={()=> setModalEliminar(false)}>No</button>
             </ModalFooter>
           </Modal>
-  </div>
-  );
-}
+  </div> : <div>No hay categorias</div>;
+
 }
 export default Trainings;

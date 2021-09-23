@@ -1,7 +1,7 @@
 import * as AT from "./authTypes";
 import axios from "axios";
 
-const AUTH_URL = "rest/user/authenticate";
+const AUTH_URL ="rest/user/authenticate";
 
 export const authenticateUser = (email, password) => async (dispatch) => {
   dispatch(loginRequest());

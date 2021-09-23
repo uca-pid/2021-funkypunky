@@ -8,9 +8,6 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
 
-
-const url="";
-
 // {auth.username}`
 
 class Trainings extends Component {
@@ -34,13 +31,13 @@ state={
 
 
 peticionGet= async () =>{
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("/rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
   console.log(this.state.data)
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get("https://funky-punky-web-app.herokuapp.com/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
+ await axios.get("/rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({categorias: response.data});
 }).catch(error=>{
   console.log(error.message);
@@ -51,7 +48,7 @@ peticionPost=async()=>{
 this.state.form.usuario = this.state.username; // {auth.username}
 //console.log(this.state.form)
   delete this.state.form.id;
- await axios.post(url,this.state.form).then(response=>{
+ await axios.post(this.state.form).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -61,14 +58,14 @@ this.state.form.usuario = this.state.username; // {auth.username}
 
 peticionPut=()=>{
   //console.log(this.state.form);
-  axios.put(url+this.state.form.id, this.state.form).then(response=>{
+  axios.put(this.state.form.id, this.state.form).then(response=>{
       this.modalInsertar();
       this.peticionGet();
     })
 }
 
 peticionDelete=()=>{
-  axios.delete(url+this.state.form.id).then(response=>{
+  axios.delete(this.state.form.id).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
