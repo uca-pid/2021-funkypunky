@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -76,6 +77,32 @@ public class UserResourceImpl {
 			updatedUser.setPassword(new BCryptPasswordEncoder().encode(password));
 			log.info("New updated password : " + password);
 			User savedUser = userRepository.saveAndFlush(updatedUser);
+			jsonObject.put("message", savedUser.getName() + " saved succesfully");
+			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+		} catch (JSONException e) {
+			try {
+				jsonObject.put("exception", e.getMessage());
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+			return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+		}
+	}
+
+	@PostMapping(value = "/changeUserPw", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> changeUserPw(@RequestBody Map<String, Object> payload) {
+		log.info("UserResourceImpl : changeUserPw");
+		JSONObject jsonObject = new JSONObject();
+		String user = (String) payload.get("username");
+		String password = (String) payload.get("password");
+
+		try {
+			User updatedUser = userRepository.findByEmail(user);
+			updatedUser.setPassword(new BCryptPasswordEncoder().encode(password));
+
+			User savedUser = userRepository.saveAndFlush(updatedUser);
+
+//			emailService.sendSimpleMessage(updatedUser.getEmail(),"Contraseña Cambiada - 2FIT","Su contraseña ha sido cambiada con exito");
 			jsonObject.put("message", savedUser.getName() + " saved succesfully");
 			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
 		} catch (JSONException e) {
