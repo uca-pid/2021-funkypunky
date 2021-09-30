@@ -23,7 +23,7 @@ public class Entrenamiento {
 	@JoinColumn (name = "user_id", nullable = false)
 	private User assignedUser;
 
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn (name = "category_id", nullable = false)
 	private Categoria categoria;
 

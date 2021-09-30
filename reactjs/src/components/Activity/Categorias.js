@@ -105,7 +105,7 @@ await this.setState({
     const {form}=this.state;
     if (!this.state.data) {
                 return (
-                <div style={{color: 'white'}}>Debe iniciar sesion para ver sus categorias.</div>)
+                <div style={{color: 'white'}}>Cargando datos...</div>)
     }
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>

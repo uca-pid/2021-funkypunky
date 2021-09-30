@@ -58,6 +58,13 @@ this.state.form.usuario = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
+console.log(this.state.form)
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
+                                                         'id_categoria':parseInt(this.state.form.categoria),
+                                                         'descripcion':this.state.form.description,
+                                                         'duracion':parseInt(this.state.form.duracion),
+                                                         'usuario': this.state.username,
+                                                         'fecha':this.state.form.fecha,}).then(response=>{
   //console.log(this.state.form);
   axios.put(url+this.state.form.id, this.state.form).then(response=>{
       this.modalInsertar();
@@ -66,6 +73,9 @@ peticionPut=()=>{
 }
 
 peticionDelete=()=>{
+  console.log(this.state.form.id)
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento',{'id':this.state.form.id}).then(response=>{
+
   axios.delete(url+this.state.form.id).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
@@ -120,7 +130,7 @@ await this.setState({
     const {form}=this.state;
         if (!this.state.data || !this.state.categorias) {
                     return (
-                    <div style={{color: 'white'}}>Debe iniciar sesion para ver sus entrenamientos.</div>)
+                    <div style={{color: 'white'}}>Cargando datos...</div>)
         }else{
 
   return (
@@ -200,7 +210,7 @@ await this.setState({
 
           <Modal isOpen={this.state.modalEliminar}>
             <ModalBody>
-               Estás seguro que deseas eliminar a la entrenamiento {form && form.categoria}
+               Estás seguro que deseas eliminar al entrenamiento {form && form.description}
             </ModalBody>
             <ModalFooter>
               <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>
