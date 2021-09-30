@@ -6,10 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
-import {BASE_DEV_URL} from "../../utils/constants";
-
-const url="";
-
+import {BASE_DEV_URL} from "../../utils/constants.js";
 
 class Trainings extends Component {
 state={
@@ -21,9 +18,10 @@ state={
     id:'',
     nombre:'',
     calPerMin:'',
-    user: '',
+    user_mail: '',
   }
 }
+
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
@@ -34,10 +32,9 @@ peticionGet= async () =>{
 }
 
 peticionPost=async()=>{
-this.state.form.user = this.state.username; // {auth.username}
-//console.log(this.state.form)
+this.state.form.user_mail = this.state.username; // {auth.username}
   delete this.state.form.id;
- await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',this.state.form).then(response=>{
+ await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   }).catch(error=>{
@@ -46,8 +43,7 @@ this.state.form.user = this.state.username; // {auth.username}
 }
 
 peticionPut=()=>{
-console.log(this.state.form);
-  axios.put(url+this.state.form.id, this.state.form).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
     this.modalInsertar();
     this.peticionGet();
   })
@@ -71,7 +67,7 @@ seleccionarcategoria=(categoria)=>{
         id:categoria.id,
         nombre:categoria.nombre,
         calPerMin:categoria.calPerMin,
-        user:this.state.username, // {auth.username}
+        user_mail:this.state.username, // {auth.username}
     }
   })
 }
@@ -84,7 +80,6 @@ await this.setState({
     [e.target.name]: e.target.value
   }
 });
-//console.log(this.state.form);
 }
 
   componentDidMount() {
@@ -92,26 +87,25 @@ await this.setState({
     if (localStorage.jwtToken) {
           authToken(localStorage.jwtToken);
           var token = localStorage.jwtToken
-          //console.log(localStorage.jwtToken);
           var decoded = jwt_decode(token);
           this.state.username = decoded.sub;
-          this.state.form.user = decoded.sub;
+          this.state.form.user_mail = decoded.sub;
     }
     this.peticionGet();
   }
+
 
 
   render(){
     const {form}=this.state;
     if (!this.state.data) {
                 return (
-                <div style={{color: 'white'}}>Debe iniciar sesion para ver sus categorias.</div>)
+                <div style={{color: 'white'}}>Cargando datos...</div>)
     }
   return (
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
     <h2 style={{color: "white"}}>Categorias Fijas</h2>
   <br /><br />
-  {console.log(this.state.data)}
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
