@@ -9,13 +9,14 @@ import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import CategoriesSelector from './CategoriesSelector.js'
+import { useSelector } from "react-redux";
 
 
 // {auth.username}`
 
 const Trainings = () => {
 
-const [data, setData] = useState(null);
+const [data, setData] = useState([]);
 const [categorias, setCategorias] = useState([]);
 const [modalInsertar, setModalInsertar] = useState(false);
 const [modalEliminar, setModalEliminar] = useState(false);
@@ -24,20 +25,39 @@ const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 
+ useEffect(() => {
+  if (localStorage && localStorage.jwtToken) {
+        const token = localStorage.jwtToken
+        const decoded = jwt_decode(token);
+        const usuario = decoded.sub;
+        console.log(usuario, 'decoded')
+        setUsername(usuario);
+         console.log(username, ' username')
+
+        setForm({...form, usuario: decoded.sub});
+        console.log(username, ' username')
+        console.log( form, 'form')
+  }
+  peticionGet();
+ }, [username])
+
 const peticionGet = async () =>{
+  setLoading(true);
  await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
   setData(response.data);
-  setLoading(false);
 }).catch(error=>{
   console.log(error.message);
 })
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
   setCategorias(response.data);
-    setLoading(false);
+
 }).catch(error=>{
   console.log(error.message);
 })
+setLoading(false);
+console.log(loading, ' loadingg')
 }
+  console.log(data, 'data')
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
@@ -65,6 +85,14 @@ const peticionDelete = () => {
     peticionGet();
   })
 }
+  if (localStorage.jwtToken) {
+    authToken(localStorage.jwtToken);
+  }
+
+const auth = useSelector((state) => state.auth);
+
+
+
 
 const handleModalInsertar = () => {
   setModalInsertar(!modalInsertar);
@@ -106,22 +134,10 @@ setForm({
   setModalEliminar(true)
   }
 
-  useEffect(() => {
-  if (localStorage && localStorage.jwtToken) {
-  console.log(localStorage, 'localstorage')
-        authToken(localStorage.jwtToken);
-        const token = localStorage.jwtToken
-        const decoded = jwt_decode(token);
-        setUsername(decoded.sub);
-        setForm({...form, usuario: decoded.sub});
-  }
-    peticionGet();
- }, [localStorage, form, peticionGet])
-
   return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
   <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
-      <CategoriesSelector />
+      <CategoriesSelector data={data} setData={setData} />
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -150,7 +166,7 @@ setForm({
                 </td>
           </tr>
           )
-        })}
+        }) || "No hay entrenamientos para esa categoria"}
       </tbody>
     </table>
     <Modal isOpen={modalInsertar}>

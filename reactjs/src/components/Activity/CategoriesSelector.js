@@ -26,7 +26,7 @@ const categories = [
   'Libre'
 ];
 
-const CategoriesSelector = () => {
+const CategoriesSelector = ({data, setData}) => {
   const [categoriesSelected, setCategoriesSelected] = useState([]);
 
   const handleChange = (event) => {
@@ -37,6 +37,10 @@ const CategoriesSelector = () => {
       // On autofill we get a the stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
+
+    const filteredData = data.filter(registro =>  console.log(registro.categoria.nombre, 'nombre') );
+    console.log(filteredData, 'filtered data')
+    setData(filteredData);
   };
 
   return (
