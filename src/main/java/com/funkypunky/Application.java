@@ -94,6 +94,7 @@ public class Application implements CommandLineRunner {
 			entrenamiento1.setDuracion(120);
 			entrenamiento1.setDescription("Lagos con agus el martes");
 
+			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
 		}
 	}
