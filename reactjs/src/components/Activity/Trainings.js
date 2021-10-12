@@ -1,5 +1,5 @@
 import authToken from "../../utils/authToken";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,6 +24,12 @@ const [username, setUsername] = useState('');
 const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria:'', fecha:'', hora:'', duracion:''})
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
+const [filteredData, setFilteredData] = useState(data);
+    console.log(filteredData, 'filteredData from trianings!!!')
+
+useEffect(()=>{
+setFilteredData(data)
+}, [data, setData]);
 
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
@@ -67,7 +73,7 @@ setForm({...form, usuario: username}); // {auth.username}
                                                               'duracion': parseInt(form.duracion),
                                                               'usuario': username,
                                                               'fecha':form.fecha}).then(response=> {
-                                                                                        modalInsertar();
+                                                                                        handleModalInsertar();
                                                                                         peticionGet();
                                                                                         }).catch(error=>{ console.log(error.message); })}
 
@@ -77,10 +83,10 @@ const peticionPut = () => {
                                                          'descripcion': form.description,
                                                          'duracion':parseInt(form.duracion),
                                                          'usuario': username,
-                                                         'fecha': form.fecha,}).then(response=>{ modalInsertar(); peticionGet(); })}
+                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })}
 
 const peticionDelete = () => {
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento'+{'id':form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento', {'id':form.id}).then(response=>{
     setModalEliminar(false)
     peticionGet();
   })
@@ -98,7 +104,7 @@ const handleModalInsertar = () => {
   setModalInsertar(!modalInsertar);
 }
 
-const seleccionarentrenamiento = (entrenamiento) => {
+const seleccionarEntrenamiento = (entrenamiento) => {
 setTipoModal('actualizar');
 setForm({        id: entrenamiento.id,
                  usuario: username, // {auth.username}
@@ -108,7 +114,8 @@ setForm({        id: entrenamiento.id,
                  hora: entrenamiento.endTime,
                  duracion: entrenamiento.duracion,
                  calorias: entrenamiento.categoria.calPerMin,
-                 })}
+                 })
+}
 
 const handleChange = async e => {
 e.persist();
@@ -118,26 +125,27 @@ setForm({
   })
 };
 
-  const handleAgregarEntrenamiento = () =>{
-  setForm(null);
+  const handleAgregarEntrenamiento = (entrenamiento) =>{
+  setForm({});
   setTipoModal('insertar');
-  modalInsertar()
+  handleModalInsertar()
   };
 
-  const handleEditarEntrenamiento = entrenamiento =>{
-  seleccionarentrenamiento(entrenamiento);
-  modalInsertar()
+  const handleEditarEntrenamiento = (entrenamiento) =>{
+  console.log(entrenamiento, 'entrenamiento!!')
+  seleccionarEntrenamiento(entrenamiento);
+  handleModalInsertar()
   }
 
-  const handleEliminarEntrenamiento = entrenamiento =>{
-  seleccionarentrenamiento(entrenamiento);
+  const handleEliminarEntrenamiento = (entrenamiento) =>{
+  seleccionarEntrenamiento(entrenamiento);
   setModalEliminar(true)
   }
 
   return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
   <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
-      <CategoriesSelector data={data} setData={setData} />
+      <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData}/>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -151,7 +159,7 @@ setForm({
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
-        {data.map(entrenamiento=>{
+        {filteredData.map(entrenamiento => {
           return(
           <tr key={entrenamiento.id}>
           <td>{entrenamiento.categoria.nombre}</td>
@@ -160,13 +168,13 @@ setForm({
           <td>{entrenamiento.duracion}</td>
           <td>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
           <td>
-                <button className="btn btn-primary" onClick={entrenamiento => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
+                <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
-                <button className="btn btn-danger" onClick={entrenamiento => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
           </tr>
           )
-        }) || "No hay entrenamientos para esa categoria"}
+        }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>
     <Modal isOpen={modalInsertar}>
@@ -177,7 +185,7 @@ setForm({
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
-                    <option disable>  </option>
+                    //<option disable>  </option>
                     {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
@@ -210,7 +218,7 @@ setForm({
                Estás seguro que deseas eliminar al entrenamiento {form && form.description}
             </ModalBody>
             <ModalFooter>
-              <button className="btn btn-danger" onClick={()=>peticionDelete()}>Sí</button>
+              <button className="btn btn-danger" onClick={peticionDelete}>Sí</button>
               <button className="btn btn-secundary" onClick={()=>setModalEliminar(false)}>No</button>
             </ModalFooter>
           </Modal>

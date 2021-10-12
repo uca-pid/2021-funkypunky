@@ -26,21 +26,17 @@ const categories = [
   'Libre'
 ];
 
-const CategoriesSelector = ({data, setData}) => {
+const CategoriesSelector = ({data, setData, filteredData, setFilteredData}) => {
   const [categoriesSelected, setCategoriesSelected] = useState([]);
 
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setCategoriesSelected(
-      // On autofill we get a the stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
+  const handleChange = async (event) => {
+    setCategoriesSelected(event.target.value);
+    await setFilteredData(data);
+        console.log(filteredData, ' filtered dataaaa 1')
 
-    const filteredData = data.filter(registro =>  console.log(registro.categoria.nombre, 'nombre') );
-    console.log(filteredData, 'filtered data')
-    setData(filteredData);
+    const aux = filteredData.filter(registro => event.target.value.includes(registro.categoria.nombre));
+    setFilteredData(aux);
+    console.log(filteredData, ' filtered dataaaa 2')
   };
 
   return (

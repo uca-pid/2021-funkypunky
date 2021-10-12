@@ -2,19 +2,20 @@ import React from 'react'
 import { Line } from 'react-chartjs-2'
 
 
-const BarChart = () => {
+const LineChart = () => {
   return (
     <div>
       <Line
         data={{
-          labels: [  'Correr',
-                     'Caminar',
-                     'Ciclismo',
-                     'Natacion',
-                     'Libre'],
+          labels: [  'Enero',
+                     'Febrero',
+                     'Marzo',
+                     'Abril',
+                     'Mayo'
+                     ],
           datasets: [
             {
-              label: '# of votes',
+              label: 'Total',
               data: [12, 16, 3, 5, 2],
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -34,7 +35,7 @@ const BarChart = () => {
             },
           ],
         }}
-        height={400}
+        height={300}
         width={600}
         options={{
           maintainAspectRatio: false,
@@ -49,7 +50,7 @@ const BarChart = () => {
           },
           legend: {
             labels: {
-              fontSize: 25,
+              fontSize: 20,
             },
           },
         }}
@@ -58,4 +59,4 @@ const BarChart = () => {
   )
 }
 
-export default PieChart;
+export default LineChart;
