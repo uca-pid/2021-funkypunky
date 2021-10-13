@@ -49,7 +49,7 @@ const PieChart = () => {
           },
           legend: {
             labels: {
-              fontSize: 25,
+              fontSize: 20,
             },
           },
         }}
