@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 @SpringBootApplication
@@ -70,6 +73,8 @@ public class Application implements CommandLineRunner {
 		if (entrenamientoService.findAll().isEmpty()) {
 			Entrenamiento entrenamiento1 = new Entrenamiento();
 			User user = userService.findAll().stream().findFirst().get();
+			Entrenamiento entrenamiento2 = new Entrenamiento();
+			Entrenamiento entrenamiento3 = new Entrenamiento();
 
 			Categoria categoria = new Categoria();
 			categoria.setCalPerMin(10F);
@@ -84,18 +89,39 @@ public class Application implements CommandLineRunner {
 			categoria2.setIs_editable(Editable.NOT_EDITABLE);
 			categoria2.setNombre("Caminar");
 			categoria2.setUser(null);
-			categoriaService.saveOrUpdate(categoria2);
 
-
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = dateFormat.parse("23/09/2021");
+			long time = date.getTime();
 
 			entrenamiento1.setCategoria(categoria2);
 			entrenamiento1.setAssignedUser(user);
-			entrenamiento1.setStartTime(new Timestamp(12344));
+			entrenamiento1.setStartTime(new Timestamp(time));
 			entrenamiento1.setDuracion(120);
 			entrenamiento1.setDescription("Lagos con agus el martes");
 
+			entrenamiento2.setCategoria(categoria);
+			entrenamiento2.setAssignedUser(user);
+			entrenamiento2.setStartTime(new Timestamp(time));
+			entrenamiento2.setDuracion(10);
+			entrenamiento2.setDescription("Correr por la city");
+
+
+			date = dateFormat.parse("23/04/2021");
+			time = date.getTime();
+
+			entrenamiento3.setCategoria(categoria2);
+			entrenamiento3.setAssignedUser(user);
+			entrenamiento3.setStartTime(new Timestamp(time));
+			entrenamiento3.setDuracion(15);
+			entrenamiento3.setDescription("Saltando la soga");
+
+			categoriaService.saveOrUpdate(categoria2);
 			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
+			entrenamientoService.saveOrUpdate(entrenamiento2);
+			entrenamientoService.saveOrUpdate(entrenamiento3);
+
 		}
 	}
 

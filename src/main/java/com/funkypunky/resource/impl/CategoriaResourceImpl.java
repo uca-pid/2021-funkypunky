@@ -61,7 +61,7 @@ public class CategoriaResourceImpl {
 
 		JSONObject jsonObject = new JSONObject();
 		if(!userService.findByEmail(user_mail).isPresent()){
-			return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Categoria does not exist", HttpStatus.BAD_REQUEST);
 		}
 
 		try {
