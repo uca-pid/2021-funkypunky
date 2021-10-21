@@ -70,7 +70,7 @@ public class MetricasResourceImpl {
 
 	@GetMapping("/caloriesInRange")
 	@ResponseBody
-	public Map<YearMonth,Float> getMetricByUserMonth(@RequestParam String user_email, @RequestParam String rangeStart, @RequestParam String rangeEnd) {
+	public Map<YearMonth,Float> getCaloriesInRange(@RequestParam String user_email, @RequestParam String rangeStart, @RequestParam String rangeEnd) {
 
 		YearMonth yearMonthStart = YearMonth.parse(rangeStart);
 		YearMonth yearMonthEnd = YearMonth.parse(rangeEnd);

@@ -5,6 +5,7 @@ import com.funkypunky.service.IRoleService;
 import com.funkypunky.service.IService;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.EntrenamientoServiceImpl;
+import com.funkypunky.service.impl.ObjetivoServiceImpl;
 import com.funkypunky.utils.ConstantUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.Date;
 
 
@@ -25,6 +27,9 @@ public class Application implements CommandLineRunner {
 
 	@Autowired
 	private EntrenamientoServiceImpl entrenamientoService;
+
+	@Autowired
+	private ObjetivoServiceImpl objetivoService;
 
 	@Autowired
 	private CategoriaServiceImpl categoriaService;
@@ -75,6 +80,9 @@ public class Application implements CommandLineRunner {
 			User user = userService.findAll().stream().findFirst().get();
 			Entrenamiento entrenamiento2 = new Entrenamiento();
 			Entrenamiento entrenamiento3 = new Entrenamiento();
+			Entrenamiento entrenamiento4 = new Entrenamiento();
+			Objetivo objetivo = new Objetivo();
+
 
 			Categoria categoria = new Categoria();
 			categoria.setCalPerMin(10F);
@@ -116,11 +124,29 @@ public class Application implements CommandLineRunner {
 			entrenamiento3.setDuracion(15);
 			entrenamiento3.setDescription("Saltando la soga");
 
+			date = dateFormat.parse("23/07/2021");
+			time = date.getTime();
+
+			entrenamiento4.setCategoria(categoria2);
+			entrenamiento4.setAssignedUser(user);
+			entrenamiento4.setStartTime(new Timestamp(time));
+			entrenamiento4.setDuracion(25);
+			entrenamiento4.setDescription("nicky jugando");
+
+
+			objetivo.setPeriod(YearMonth.parse("2021-09"));
+			objetivo.setUser(user);
+			objetivo.setTargetCaloryCount(1200f);
+
+
+			objetivoService.saveOrUpdate(objetivo);
 			categoriaService.saveOrUpdate(categoria2);
 			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
 			entrenamientoService.saveOrUpdate(entrenamiento2);
 			entrenamientoService.saveOrUpdate(entrenamiento3);
+			entrenamientoService.saveOrUpdate(entrenamiento4);
+
 
 		}
 	}
