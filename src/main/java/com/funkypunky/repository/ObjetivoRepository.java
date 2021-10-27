@@ -26,4 +26,6 @@ public interface ObjetivoRepository extends JpaRepository<Objetivo, Long> {
     @Query("delete FROM Objetivo WHERE user=:user AND period=:period")
     void deleteByUserAndPeriod(@Param("user") User user, @Param("period") YearMonth period );
 
+    @Query("FROM Objetivo WHERE user=:user")
+    Collection<Objetivo> findHistoryByUser(@Param("user") User user);
 }

@@ -64,4 +64,7 @@ public class ObjetivoServiceImpl implements IService<Objetivo> {
 		return jsonObject.toString();
 	}
 
+	public Collection<Objetivo> findHistoryByUser(User user) {
+		return objetivoRepository.findHistoryByUser(user);
+	}
 }
