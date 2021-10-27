@@ -62,6 +62,18 @@ public class ObjetivosResourceImpl {
 		return objetivo;
 	}
 
+	@GetMapping("/getHistorialObjetivo")
+	@ResponseBody
+	public Collection<Objetivo> getObjetivoByUserAndPeriod(@RequestParam String user_email) {
+		User user = null;
+
+		if (userService.findByEmail(user_email).isPresent()) {
+			user = userService.findByEmail(user_email).get();
+		}
+
+		return objetivoService.findHistoryByUser(user);
+	}
+
 	@PostMapping(value = "/agregarObjetivo", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> agregarObjetivo(@RequestBody Map<String, Object> payload) {
 
