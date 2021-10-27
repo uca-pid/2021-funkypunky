@@ -14,6 +14,7 @@ import ResetPassword from "./components/User/ResetPassword";
 import Trainings from "./components/Activity/Trainings";
 import Categorias from "./components/Activity/Categorias";
 import ChangePassword from "./components/User/ChangePassword";
+import Objetivos from "./components/Activity/Objetivos";
 
 const App = () => {
   window.onbeforeunload = (event) => {
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="/changepassword" exact component={ChangePassword} />
               <Route path="/entrenamientos" exact component={Trainings} />
               <Route path="/categorias" exact component={Categorias} />
+              <Route path="/objetivos" exact component={Objetivos} />
               <Route
                 path="/logout"
                 exact
