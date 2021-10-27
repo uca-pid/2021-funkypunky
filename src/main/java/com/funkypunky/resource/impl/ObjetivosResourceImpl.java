@@ -27,6 +27,7 @@ import java.time.YearMonth;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/objetivos")
@@ -49,22 +50,28 @@ public class ObjetivosResourceImpl {
 
 	@GetMapping("/getProgresoObjetivo")
 	@ResponseBody
-	public Objetivo getObjetivoByUserAndPeriod(@RequestParam String user_email, @RequestParam String yearMonthPeriod) {
+	public Collection<Objetivo> getObjetivoByUserAndPeriod(@RequestParam String user_email, @RequestParam String yearMonthPeriodStart, @RequestParam String yearMonthPeriodEnd) {
 		User user = null;
-		YearMonth yearMonth = YearMonth.parse(yearMonthPeriod);
+		YearMonth yearMonthStart = YearMonth.parse(yearMonthPeriodStart);
+		YearMonth yearMonthEnd = YearMonth.parse(yearMonthPeriodEnd);
 
 		if (userService.findByEmail(user_email).isPresent()) {
 			user = userService.findByEmail(user_email).get();
 		}
 
-		Objetivo objetivo = objetivoService.findByUserAndPeriod(user,yearMonth).orElse(new Objetivo());
-		objetivo.setProgressCalory(metricasResource.getCaloriesInRange(user_email,yearMonthPeriod,yearMonthPeriod).get(yearMonth));
+		Collection<Objetivo> objetivo = objetivoService.findByUserAndPeriodRange(user, yearMonthStart, yearMonthEnd);
+
+		for(Objetivo objetivo1: objetivo){
+			String yearMonth = objetivo1.getPeriod().toString();
+			objetivo1.setProgressCalory(metricasResource.getCaloriesInRange(user_email,yearMonth,yearMonth).get(objetivo1.getPeriod()));
+		}
+
 		return objetivo;
 	}
 
 	@GetMapping("/getHistorialObjetivo")
 	@ResponseBody
-	public Collection<Objetivo> getObjetivoByUserAndPeriod(@RequestParam String user_email) {
+	public Collection<Objetivo> getObjetivoHistoryByUser(@RequestParam String user_email) {
 		User user = null;
 
 		if (userService.findByEmail(user_email).isPresent()) {

@@ -67,4 +67,8 @@ public class ObjetivoServiceImpl implements IService<Objetivo> {
 	public Collection<Objetivo> findHistoryByUser(User user) {
 		return objetivoRepository.findHistoryByUser(user);
 	}
+
+    public Collection<Objetivo> findByUserAndPeriodRange(User user, YearMonth yearMonthStart, YearMonth yearMonthEnd) {
+		return objetivoRepository.findByUserAndPeriodRange(user, yearMonthStart, yearMonthEnd);
+    }
 }
