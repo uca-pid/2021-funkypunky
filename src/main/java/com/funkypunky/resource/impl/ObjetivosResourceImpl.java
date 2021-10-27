@@ -128,7 +128,34 @@ public class ObjetivosResourceImpl {
 		}
 	}
 
+	@PostMapping(value = "/eliminarObjetivo", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> eliminarObjetivo(@RequestBody Map<String, Object> payload) {
 
+		String usuario = (String) payload.get("usuario");
+		YearMonth period = YearMonth.parse( (String) payload.get("periodo"));
+
+		if(!userService.findByEmail(usuario).isPresent()){
+			return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
+		}
+
+		JSONObject jsonObject = new JSONObject();
+
+		User user = userService.findByEmail(usuario).orElse(new User());
+
+		try {
+			String response = objetivoService.deleteByUserAndPeriod(user,period);
+
+			jsonObject.put("objetivo de: ", response );
+			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+		} catch (JSONException e) {
+			try {
+				jsonObject.put("exception", e.getMessage());
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+			return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+		}
+	}
 
 
 
