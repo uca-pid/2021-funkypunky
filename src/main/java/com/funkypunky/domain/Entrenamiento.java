@@ -33,6 +33,10 @@ public class Entrenamiento {
 	@Column
 	private Integer duracion;
 
+	public Float getCaloriasQuemadas(){
+		return duracion * categoria.getCalPerMin();
+	}
+
 	public Entrenamiento() {
 	}
 

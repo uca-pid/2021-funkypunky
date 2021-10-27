@@ -5,6 +5,7 @@ import com.funkypunky.service.IRoleService;
 import com.funkypunky.service.IService;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.EntrenamientoServiceImpl;
+import com.funkypunky.service.impl.ObjetivoServiceImpl;
 import com.funkypunky.utils.ConstantUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.YearMonth;
+import java.util.Date;
 
 
 @SpringBootApplication
@@ -22,6 +27,9 @@ public class Application implements CommandLineRunner {
 
 	@Autowired
 	private EntrenamientoServiceImpl entrenamientoService;
+
+	@Autowired
+	private ObjetivoServiceImpl objetivoService;
 
 	@Autowired
 	private CategoriaServiceImpl categoriaService;
@@ -70,6 +78,11 @@ public class Application implements CommandLineRunner {
 		if (entrenamientoService.findAll().isEmpty()) {
 			Entrenamiento entrenamiento1 = new Entrenamiento();
 			User user = userService.findAll().stream().findFirst().get();
+			Entrenamiento entrenamiento2 = new Entrenamiento();
+			Entrenamiento entrenamiento3 = new Entrenamiento();
+			Entrenamiento entrenamiento4 = new Entrenamiento();
+			Objetivo objetivo = new Objetivo();
+
 
 			Categoria categoria = new Categoria();
 			categoria.setCalPerMin(10F);
@@ -84,18 +97,57 @@ public class Application implements CommandLineRunner {
 			categoria2.setIs_editable(Editable.NOT_EDITABLE);
 			categoria2.setNombre("Caminar");
 			categoria2.setUser(null);
-			categoriaService.saveOrUpdate(categoria2);
 
-
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = dateFormat.parse("23/09/2021");
+			long time = date.getTime();
 
 			entrenamiento1.setCategoria(categoria2);
 			entrenamiento1.setAssignedUser(user);
-			entrenamiento1.setStartTime(new Timestamp(12344));
+			entrenamiento1.setStartTime(new Timestamp(time));
 			entrenamiento1.setDuracion(120);
 			entrenamiento1.setDescription("Lagos con agus el martes");
 
+			entrenamiento2.setCategoria(categoria);
+			entrenamiento2.setAssignedUser(user);
+			entrenamiento2.setStartTime(new Timestamp(time));
+			entrenamiento2.setDuracion(10);
+			entrenamiento2.setDescription("Correr por la city");
+
+
+			date = dateFormat.parse("23/04/2021");
+			time = date.getTime();
+
+			entrenamiento3.setCategoria(categoria2);
+			entrenamiento3.setAssignedUser(user);
+			entrenamiento3.setStartTime(new Timestamp(time));
+			entrenamiento3.setDuracion(15);
+			entrenamiento3.setDescription("Saltando la soga");
+
+			date = dateFormat.parse("23/07/2021");
+			time = date.getTime();
+
+			entrenamiento4.setCategoria(categoria2);
+			entrenamiento4.setAssignedUser(user);
+			entrenamiento4.setStartTime(new Timestamp(time));
+			entrenamiento4.setDuracion(25);
+			entrenamiento4.setDescription("nicky jugando");
+
+
+			objetivo.setPeriod(YearMonth.parse("2021-09"));
+			objetivo.setUser(user);
+			objetivo.setTargetCaloryCount(1200f);
+
+
+			objetivoService.saveOrUpdate(objetivo);
+			categoriaService.saveOrUpdate(categoria2);
 			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
+			entrenamientoService.saveOrUpdate(entrenamiento2);
+			entrenamientoService.saveOrUpdate(entrenamiento3);
+			entrenamientoService.saveOrUpdate(entrenamiento4);
+
+
 		}
 	}
 
