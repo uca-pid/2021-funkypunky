@@ -1,21 +1,46 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Pie } from 'react-chartjs-2'
 
+import { useSelector } from "react-redux";
+import authToken from "../../utils/authToken";
+import { Alert } from "react-bootstrap";
+import { withStyles } from '@mui/styles';
+import {styles} from'.././styles'
+import axios from "axios";
+import {BASE_DEV_URL} from "../../utils/constants.js";
 
 const PieChart = () => {
+    const [categories, setCategories] = useState([]);
+    const [values, setValues] = useState([]);
+
+    const peticionGetData = async () => {
+                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email=test@user.com&yearMonthStr=2021-09").then(response=> {
+                    setCategories(Object.keys(response.data));
+                    setValues(Object.values(response.data));
+                }).catch(error=>{
+                    console.log(error.message);
+                })
+            }
+
+  if (localStorage.jwtToken) {
+    authToken(localStorage.jwtToken);
+  }
+
+  const auth = useSelector((state) => state.auth);
+    //const [dataLine, setDataLine] = useState();
+useEffect(() => {
+peticionGetData();
+},[])
+
   return (
     <div>
       <Pie
         data={{
-          labels: [  'Correr',
-                     'Caminar',
-                     'Ciclismo',
-                     'Natacion',
-                     'Libre'],
+          labels: categories,
           datasets: [
             {
               label: '# of votes',
-              data: [12, 16, 3, 5, 2],
+              data: values,
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
