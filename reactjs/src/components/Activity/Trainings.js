@@ -25,7 +25,6 @@ const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
-    console.log(filteredData, 'filteredData from trianings!!!')
 
 useEffect(()=>{
 setFilteredData(data)
@@ -36,13 +35,9 @@ setFilteredData(data)
         const token = localStorage.jwtToken
         const decoded = jwt_decode(token);
         const usuario = decoded.sub;
-        console.log(usuario, 'decoded')
         setUsername(usuario);
-         console.log(username, ' username')
 
         setForm({...form, usuario: decoded.sub});
-        console.log(username, ' username')
-        console.log( form, 'form')
   }
   peticionGet();
  }, [username])
@@ -61,9 +56,7 @@ const peticionGet = async () =>{
   console.log(error.message);
 })
 setLoading(false);
-console.log(loading, ' loadingg')
 }
-  console.log(data, 'data')
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
@@ -78,12 +71,16 @@ setForm({...form, usuario: username}); // {auth.username}
                                                                                         }).catch(error=>{ console.log(error.message); })}
 
 const peticionPut = () => {
+  if(form.fecha.length == 29){
+    form.fecha = form.fecha.slice(0, 16);
+  }
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
                                                          'descripcion': form.description,
                                                          'duracion':parseInt(form.duracion),
                                                          'usuario': username,
-                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })}
+                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  }
 
 const peticionDelete = () => {
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento', {'id':form.id}).then(response=>{
@@ -132,7 +129,6 @@ setForm({
   };
 
   const handleEditarEntrenamiento = (entrenamiento) =>{
-  console.log(entrenamiento, 'entrenamiento!!')
   seleccionarEntrenamiento(entrenamiento);
   handleModalInsertar()
   }
