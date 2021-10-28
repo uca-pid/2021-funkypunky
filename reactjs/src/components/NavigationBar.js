@@ -41,6 +41,9 @@ const NavigationBar = () => {
         <Link to={"categorias"} className="nav-link">
             Categorias
         </Link>
+        <Link to={"objetivos"} className="nav-link">
+            Objetivos
+        </Link>
       </Nav>
       <Nav className="navbar-right">
         <Link to={"changePassword"} className="nav-link" >
