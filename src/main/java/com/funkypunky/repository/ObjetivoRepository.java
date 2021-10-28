@@ -28,4 +28,7 @@ public interface ObjetivoRepository extends JpaRepository<Objetivo, Long> {
 
     @Query("FROM Objetivo WHERE user=:user")
     Collection<Objetivo> findHistoryByUser(@Param("user") User user);
+
+    @Query("FROM Objetivo WHERE user=:user AND period BETWEEN :yearMonthStart AND :yearMonthEnd")
+    Collection<Objetivo> findByUserAndPeriodRange(User user, YearMonth yearMonthStart, YearMonth yearMonthEnd);
 }
