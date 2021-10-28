@@ -25,6 +25,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.YearMonth;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,6 +62,8 @@ public class ObjetivosResourceImpl {
 
 		Collection<Objetivo> objetivo = objetivoService.findByUserAndPeriodRange(user, yearMonthStart, yearMonthEnd);
 
+		objetivo = objetivo.stream().sorted(Comparator.comparing(Objetivo::getPeriod)).collect(Collectors.toList());
+
 		for(Objetivo objetivo1: objetivo){
 			String yearMonth = objetivo1.getPeriod().toString();
 			objetivo1.setProgressCalory(metricasResource.getCaloriesInRange(user_email,yearMonth,yearMonth).get(objetivo1.getPeriod()));
@@ -78,7 +81,7 @@ public class ObjetivosResourceImpl {
 			user = userService.findByEmail(user_email).get();
 		}
 
-		return objetivoService.findHistoryByUser(user);
+		return objetivoService.findHistoryByUser(user).stream().sorted(Comparator.comparing(Objetivo::getPeriod)).collect(Collectors.toList());
 	}
 
 	@PostMapping(value = "/agregarObjetivo", produces = MediaType.APPLICATION_JSON_VALUE)

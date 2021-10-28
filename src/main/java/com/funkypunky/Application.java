@@ -84,11 +84,12 @@ public class Application implements CommandLineRunner {
 			Objetivo objetivo = new Objetivo();
 
 
+			//Agregar Categorias Fijas
 			Categoria categoria = new Categoria();
-			categoria.setCalPerMin(10F);
-			categoria.setIs_editable(Editable.EDITABLE);
+			categoria.setCalPerMin(13F);
+			categoria.setIs_editable(Editable.NOT_EDITABLE);
 			categoria.setNombre("Correr");
-			categoria.setUser(user);
+			categoria.setUser(null);
 			categoriaService.saveOrUpdate(categoria);
 
 
@@ -97,6 +98,35 @@ public class Application implements CommandLineRunner {
 			categoria2.setIs_editable(Editable.NOT_EDITABLE);
 			categoria2.setNombre("Caminar");
 			categoria2.setUser(null);
+			categoriaService.saveOrUpdate(categoria2);
+
+			Categoria categoria3 = new Categoria();
+			categoria3.setCalPerMin(6F);
+			categoria3.setIs_editable(Editable.NOT_EDITABLE);
+			categoria3.setNombre("Ciclismo");
+			categoria3.setUser(null);
+			categoriaService.saveOrUpdate(categoria3);
+
+			Categoria categoria4 = new Categoria();
+			categoria4.setCalPerMin(8F);
+			categoria4.setIs_editable(Editable.NOT_EDITABLE);
+			categoria4.setNombre("Natacion");
+			categoria4.setUser(null);
+			categoriaService.saveOrUpdate(categoria4);
+
+			Categoria categoria5 = new Categoria();
+			categoria5.setCalPerMin(6F);
+			categoria5.setIs_editable(Editable.NOT_EDITABLE);
+			categoria5.setNombre("Gimnasio");
+			categoria5.setUser(null);
+			categoriaService.saveOrUpdate(categoria5);
+
+			Categoria categoria6 = new Categoria();
+			categoria6.setCalPerMin(13F);
+			categoria6.setIs_editable(Editable.EDITABLE);
+			categoria6.setNombre("Saltar la soga");
+			categoria6.setUser(user);
+			categoriaService.saveOrUpdate(categoria6);
 
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			Date date = dateFormat.parse("23/09/2021");
@@ -140,8 +170,6 @@ public class Application implements CommandLineRunner {
 
 
 			objetivoService.saveOrUpdate(objetivo);
-			categoriaService.saveOrUpdate(categoria2);
-			categoriaService.saveOrUpdate(categoria);
 			entrenamientoService.saveOrUpdate(entrenamiento1);
 			entrenamientoService.saveOrUpdate(entrenamiento2);
 			entrenamientoService.saveOrUpdate(entrenamiento3);
