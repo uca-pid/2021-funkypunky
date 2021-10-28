@@ -8,13 +8,19 @@ import { withStyles } from '@mui/styles';
 import {styles} from'.././styles'
 import axios from "axios";
 import {BASE_DEV_URL} from "../../utils/constants.js";
+import { Container, Row, Col } from 'react-grid-system';
 
-const PieChart = () => {
+const PieChart = (props) => {
+    const {
+          setSingleDate,
+          singleDate
+           } = props;
+
     const [categories, setCategories] = useState([]);
     const [values, setValues] = useState([]);
 
     const peticionGetData = async () => {
-                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email=test@user.com&yearMonthStr=2021-09").then(response=> {
+                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email=test@user.com&yearMonthStr="+ singleDate).then(response=> {
                     setCategories(Object.keys(response.data));
                     setValues(Object.values(response.data));
                 }).catch(error=>{
@@ -27,13 +33,24 @@ const PieChart = () => {
   }
 
   const auth = useSelector((state) => state.auth);
-    //const [dataLine, setDataLine] = useState();
-useEffect(() => {
-peticionGetData();
-},[])
+
+    useEffect(() => {
+    peticionGetData();
+    },[singleDate])
+
+    const onChangeStartDateHandler = (event) => {
+    setSingleDate(event.target.value);
+    }
 
   return (
     <div>
+    <Container>
+         <Row>
+             <Col sm={4}>
+            <input  value={singleDate} onInput={e => setSingleDate(e.target.value)} onChange={onChangeStartDateHandler} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
+             </Col>
+          </Row>
+          <Row>
       <Pie
         data={{
           labels: categories,
@@ -79,6 +96,8 @@ peticionGetData();
           },
         }}
       />
+        </Row>
+    </Container>
     </div>
   )
 }

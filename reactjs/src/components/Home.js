@@ -21,6 +21,7 @@ const Home = (props) => {
   const auth = useSelector((state) => state.auth);
     const [startDate, setStartDate] = useState(moment().subtract(1, 'months').format("YYYY-MM"));
     const [endDate, setEndDate] = useState(moment().format("YYYY-MM"));
+    const [singleDate, setSingleDate] = useState(moment().format("YYYY-MM"));
 
     useEffect(()=>{
         console.log(startDate, 'startDate')
@@ -36,7 +37,7 @@ const Home = (props) => {
         <div className={classes.header}>
          <h4>Porcentaje entrenamientos por categoría</h4>
         </div>
-         <PieChart />
+         <PieChart singleDate={singleDate} setSingleDate={setSingleDate}/>
        </div>
         <div className={classes.container}>
             <div className={classes.header}>
