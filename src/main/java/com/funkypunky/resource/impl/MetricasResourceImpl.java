@@ -84,6 +84,8 @@ public class MetricasResourceImpl {
 
 		Collection<Entrenamiento> entrenamientos = entrenamientoRepository.findByUser(user);
 
+		entrenamientos = entrenamientos.stream().sorted(Comparator.comparing(Entrenamiento::getStartTime)).collect(Collectors.toList());
+
 		Collection<Entrenamiento> categoria_cal = entrenamientos.stream().filter((entrenamiento -> {
 			cal.setTimeInMillis(entrenamiento.getStartTime().getTime());
 			return cal.get(Calendar.YEAR) >= yearMonthStart.getYear() && (cal.get(Calendar.MONTH)+1) >= yearMonthStart.getMonthValue()
