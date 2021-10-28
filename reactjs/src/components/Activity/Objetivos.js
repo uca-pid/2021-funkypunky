@@ -9,85 +9,95 @@ import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import CategoriesSelector from './CategoriesSelector.js'
-import BarChart from './BarChart.js'
 import { useSelector } from "react-redux";
+import { Bar } from 'react-chartjs-2';
 
 
-// {auth.username}`
+// {auth.username}
 
 const Objetivos = () => {
 
 const [data, setData] = useState([]);
 const [categorias, setCategorias] = useState([]);
+const [objetivos, setObjetivos] = useState([]);
 const [modalInsertar, setModalInsertar] = useState(false);
 const [modalEliminar, setModalEliminar] = useState(false);
 const [username, setUsername] = useState('');
-const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria:'', fecha:'', hora:'', duracion:''})
+const [form, setForm] = useState({ id:'', usuario: '', periodo:'', objetivo:''})
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
-const [filteredData, setFilteredData] = useState(data);
-    console.log(filteredData, 'filteredData from trianings!!!')
+const [inicio, setInicio] = useState();
+const [fin, setFin] = useState();
+const [chartData, setChartData] = useState([]);
+const [chartLabels, setChartLabels] = useState([]);
 
-useEffect(()=>{
-setFilteredData(data)
-}, [data, setData]);
+// INICIO
 
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
         const token = localStorage.jwtToken
         const decoded = jwt_decode(token);
         const usuario = decoded.sub;
-        console.log(usuario, 'decoded')
         setUsername(usuario);
-         console.log(username, ' username')
 
         setForm({...form, usuario: decoded.sub});
-        console.log(username, ' username')
-        console.log( form, 'form')
   }
   peticionGet();
  }, [username])
 
+// AXIOS
+
 const peticionGet = async () =>{
   setLoading(true);
- await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
-  setData(response.data);
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
+  setCategorias(response.data);
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
-  setCategorias(response.data);
-
+await axios.get(BASE_DEV_URL + "rest/objetivos/getHistorialObjetivo?user_email="+ username).then(response=>{
+  setObjetivos(response.data);
 }).catch(error=>{
   console.log(error.message);
 })
 setLoading(false);
-console.log(loading, ' loadingg')
 }
-  console.log(data, 'data')
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
  delete form.id;
- await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria': parseInt(form.categoria),
-                                                              'descripcion': form.description,
-                                                              'duracion': parseInt(form.duracion),
+ await axios.post(BASE_DEV_URL + 'rest/objetivos/agregarObjetivo',{
+                                                              'objetivo': parseInt(form.objetivo),
                                                               'usuario': username,
-                                                              'fecha':form.fecha}).then(response=> {
+                                                              "periodo": form.periodo}).then(response=> {
                                                                                         handleModalInsertar();
                                                                                         peticionGet();
                                                                                         }).catch(error=>{ console.log(error.message); })}
 
 const peticionPut = () => {
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
-                                                         'id_categoria':parseInt(form.categoria),
-                                                         'descripcion': form.description,
-                                                         'duracion':parseInt(form.duracion),
-                                                         'usuario': username,
-                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })}
+  axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
+                                                                'objetivo': parseInt(form.objetivo),
+                                                                'usuario': username,
+                                                                "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })}
+
+
+const peticionGetRango = async () =>{
+  const chartData = [];
+  const chartLabels = [];
+ await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoObjetivo?user_email=" + username +"&"+"yearMonthPeriodStart="+inicio+"&"+"yearMonthPeriodEnd="+fin).then(response=>{
+  setData(response.data);
+  for(const obj of response.data){
+    chartLabels.push(obj.period);
+    chartData.push(parseInt(obj.progressCalory)/parseInt(obj.targetCaloryCount) * 100 );
+  }
+}).catch(error=>{
+  console.log(error.message);
+})
+  setChartData(chartData);
+  setChartLabels(chartLabels);
+}
 
 const peticionDelete = () => {
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento', {'id':form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/objetivos/eliminarObjetivo', {'id':form.id}).then(response=>{
     setModalEliminar(false)
     peticionGet();
   })
@@ -96,22 +106,74 @@ const peticionDelete = () => {
     authToken(localStorage.jwtToken);
   }
 
+// GRAFICO
+
+const dataChart = {
+  labels: chartLabels,
+  datasets: [{
+    label: '% Calorias Consumidas / Calorias Objetivo',
+    data: chartData,
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+    ],
+    borderColor: [
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+    ],
+    borderWidth: 1
+  }]
+};
+
+const options = {
+  scales: {
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+          suggestedMax: 1.0,
+        },
+      },
+    ],
+  },
+};
+
+
+
+// OTROS
+
 const auth = useSelector((state) => state.auth);
-
-
-
 
 const handleModalInsertar = () => {
   setModalInsertar(!modalInsertar);
 }
 
-const seleccionarObjetivo = (entrenamiento) => {
+const seleccionarObjetivo = (objetivo) => {
 setTipoModal('actualizar');
-setForm({        id: entrenamiento.id,
+setForm({        id: objetivo.id,
                  usuario: username, // {auth.username}
-                 categoria: entrenamiento.categoria.id,
-                 fecha: entrenamiento.startTime,
-                 calorias: entrenamiento.categoria.calPerMin,
+                 periodo: objetivo.period,
+                 objetivo: objetivo.targetCaloryCount
                  })
 }
 
@@ -123,52 +185,72 @@ setForm({
   })
 };
 
-  const handleAgregarObjetivo = (entrenamiento) =>{
+  const handleAgregarObjetivo = (objetivo) =>{
   setForm({});
   setTipoModal('insertar');
   handleModalInsertar()
   };
 
-  const handleEditarEntrenamiento = (entrenamiento) =>{
-  console.log(entrenamiento, 'entrenamiento!!')
-  seleccionarObjetivo(entrenamiento);
+  const handleEditarObjetivo = (objetivo) =>{
+  seleccionarObjetivo(objetivo);
   handleModalInsertar()
   }
 
-  const handleEliminarEntrenamiento = (entrenamiento) =>{
-  seleccionarObjetivo(entrenamiento);
+  const handleEliminarObjetivo = (objetivo) =>{
+  seleccionarObjetivo(objetivo);
   setModalEliminar(true)
   }
 
   return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
-  <button className="btn btn-success" onClick={handleAgregarObjetivo}>Agregar Objetivo</button>
-  <br /><br />
-    <BarChart />
-  <br /><br />
+  <button className="btn btn-success" onClick={handleAgregarObjetivo}>Agregar objetivo</button>
+  <br/>
+   <div style={{display:'inline-block'}}>
+        Desde:
+        <input value={inicio} onInput={e => setInicio(e.target.value)} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
+        Hasta:
+        <input  value={fin} onInput={e => setFin(e.target.value)} className="form-control" required type="month" name="fecha_final" id="fecha_final" />
+        <br/>
+        <button className="btn btn-primary" onClick={peticionGetRango}>
+          Obtener % Cals/Obj
+        </button>
+   </div>
+  <Bar data={dataChart} options={options} />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
-          <th>Categoria</th>
           <th>Calorias a Quemar</th>
           <th>Mes y Año</th>
           <th> </th>
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
-        {filteredData.map(entrenamiento => {
+        {objetivos.map(objetivo => {
+            var today = new Date(),
+            date = today.getFullYear() + '-' + (today.getMonth() + 1)
+            if (objetivo.period > date){
           return(
-          <tr key={entrenamiento.id}>
-          <td>{entrenamiento.categoria.nombre}</td>
-          <td><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
-          <td>{entrenamiento.duracion}</td>
+          <tr key={objetivo.id}>
+          <td>{objetivo.targetCaloryCount}</td>
+          <td>{objetivo.period}</td>
           <td>
-                <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
+                <button className="btn btn-primary" onClick={() => handleEditarObjetivo(objetivo)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
-                <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                <button className="btn btn-danger" onClick={() => handleEliminarObjetivo(objetivo)}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
           </tr>
           )
+        }else{
+          return(
+          <tr key={objetivo.id}>
+          <td>{objetivo.targetCaloryCount}</td>
+          <td>{objetivo.period}</td>
+          <td>
+                <button className="btn btn-danger" onClick={() => handleEliminarObjetivo(objetivo)}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                </td>
+          </tr>
+          )
+        }
         }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>
@@ -178,19 +260,11 @@ setForm({
                 </ModalHeader>
                 <ModalBody>
                   <div className="form-group">
-                    <label htmlFor="categoria">Categoria</label>
-                    <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
-                    //<option disable>  </option>
-                    {categorias.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                    ))}
-                    </select>
+                    <label htmlFor="objetivo">Objetivo (Cals. a Quemar)</label>
+                    <input className="form-control" min='0' required type="number" name="objetivo" id="objetivo" onChange={handleChange} value={form?form.objetivo: ''}/>
                     <br />
-                    <label htmlFor="description">Calorias a Quemar</label>
-                    <input className="form-control" required type="number" name="description" id="description" maxLength="50" onChange={handleChange} value={form?form.description: ''}/>
-                    <br />
-                    <label htmlFor="fecha">En el Mes del Año:</label>
-                    <input className="form-control" required type="month" name="fecha" id="fecha" onChange={handleChange} value={form?form.fecha: ''}/>
+                    <label htmlFor="periodo">Periodo (mes y año)</label>
+                    <input className="form-control" min='2021-10' required type="month" name="periodo" id="periodo" onChange={handleChange} value={form?form.periodo: ''}/>
                     <br />
                   </div>
                 </ModalBody>
@@ -207,7 +281,7 @@ setForm({
           </Modal>
           <Modal isOpen={modalEliminar}>
             <ModalBody>
-               Estás seguro que deseas eliminar el objetivo ?
+               Estás seguro que deseas eliminar el objetivo?
             </ModalBody>
             <ModalFooter>
               <button className="btn btn-danger" onClick={peticionDelete}>Sí</button>
