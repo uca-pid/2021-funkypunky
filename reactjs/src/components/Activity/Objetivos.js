@@ -151,7 +151,7 @@ const options = {
       {
         ticks: {
           beginAtZero: true,
-          suggestedMax: 1.0,
+          suggestedMax: 100,
         },
       },
     ],
