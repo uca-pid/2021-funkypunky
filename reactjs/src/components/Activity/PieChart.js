@@ -1,21 +1,63 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Pie } from 'react-chartjs-2'
 
+import { useSelector } from "react-redux";
+import authToken from "../../utils/authToken";
+import { Alert } from "react-bootstrap";
+import { withStyles } from '@mui/styles';
+import {styles} from'.././styles'
+import axios from "axios";
+import {BASE_DEV_URL} from "../../utils/constants.js";
+import { Container, Row, Col } from 'react-grid-system';
 
-const PieChart = () => {
+const PieChart = (props) => {
+    const {
+          setSingleDate,
+          singleDate
+           } = props;
+
+    const [categories, setCategories] = useState([]);
+    const [values, setValues] = useState([]);
+
+    const peticionGetData = async () => {
+                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email=test@user.com&yearMonthStr="+ singleDate).then(response=> {
+                    setCategories(Object.keys(response.data));
+                    setValues(Object.values(response.data));
+                }).catch(error=>{
+                    console.log(error.message);
+                })
+            }
+
+  if (localStorage.jwtToken) {
+    authToken(localStorage.jwtToken);
+  }
+
+  const auth = useSelector((state) => state.auth);
+
+    useEffect(() => {
+    peticionGetData();
+    },[singleDate])
+
+    const onChangeStartDateHandler = (event) => {
+    setSingleDate(event.target.value);
+    }
+
   return (
     <div>
+    <Container>
+         <Row>
+             <Col sm={4}>
+            <input  value={singleDate} onInput={e => setSingleDate(e.target.value)} onChange={onChangeStartDateHandler} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
+             </Col>
+          </Row>
+          <Row>
       <Pie
         data={{
-          labels: [  'Correr',
-                     'Caminar',
-                     'Ciclismo',
-                     'Natacion',
-                     'Libre'],
+          labels: categories,
           datasets: [
             {
               label: '# of votes',
-              data: [12, 16, 3, 5, 2],
+              data: values,
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -54,6 +96,8 @@ const PieChart = () => {
           },
         }}
       />
+        </Row>
+    </Container>
     </div>
   )
 }
