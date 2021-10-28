@@ -35,9 +35,6 @@ const NavigationBar = () => {
   const userLinks = (
     <>
       <Nav className="mr-auto">
-      <Link to={"home"} className="nav-link">
-                  Home
-              </Link>
         <Link to={"entrenamientos"} className="nav-link">
             Entrenamientos
         </Link>
