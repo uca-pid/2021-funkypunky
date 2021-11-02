@@ -19,6 +19,7 @@ const MenuProps = {
 };
 
 const categories = [
+  'Todas',
   'Correr',
   'Caminar',
   'Ciclismo',
@@ -27,7 +28,7 @@ const categories = [
 ];
 
 const CategoriesSelector = ({data, setData, filteredData, setFilteredData}) => {
-  const [categoriesSelected, setCategoriesSelected] = useState("");
+  const [categoriesSelected, setCategoriesSelected] = useState("Todas");
 
   useEffect(()=>{
         setFilteredData(data);
@@ -41,8 +42,10 @@ return new Promise((resolve) => setTimeout(resolve, ms));
            if(categoriesSelected.length !== 0){
              if(!isCancelled){
                  await setFilteredData(data) && timeout(1000);
-                 const aux = filteredData.filter(registro => categoriesSelected == registro.categoria.nombre);
-                 setFilteredData(aux);
+                 if(categoriesSelected !== "Todas"){
+                  const aux = filteredData.filter(registro => categoriesSelected == registro.categoria.nombre);
+                  setFilteredData(aux);
+                 }
              }
            }
   }
