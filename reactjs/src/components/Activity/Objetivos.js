@@ -61,6 +61,7 @@ const peticionGet = async () =>{
 })
 await axios.get(BASE_DEV_URL + "rest/objetivos/getHistorialObjetivo?user_email="+ username).then(response=>{
   setObjetivos(response.data);
+  console.log(response.data);
 }).catch(error=>{
   console.log(error.message);
 })
@@ -297,6 +298,7 @@ setForm({
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
+          <th>Categoria</th>
           <th>Calorias a Quemar</th>
           <th>Mes y Año</th>
           <th> </th>
@@ -309,6 +311,7 @@ setForm({
             if (objetivo.period > date){
           return(
           <tr key={objetivo.id}>
+          <td>{objetivo.categoria.nombre}</td>
           <td>{objetivo.targetCaloryCount}</td>
           <td>{objetivo.period}</td>
           <td>
@@ -321,6 +324,7 @@ setForm({
         }else{
           return(
           <tr key={objetivo.id}>
+          <td>{objetivo.categoria.nombre}</td>
           <td>{objetivo.targetCaloryCount}</td>
           <td>{objetivo.period}</td>
           <td>
