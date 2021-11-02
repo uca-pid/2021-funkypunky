@@ -37,7 +37,6 @@ setFilteredData(data)
         const decoded = jwt_decode(token);
         const usuario = decoded.sub;
         setUsername(usuario);
-
         setForm({...form, usuario: decoded.sub});
   }
   peticionGet();
