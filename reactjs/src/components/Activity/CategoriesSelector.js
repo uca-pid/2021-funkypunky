@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -27,35 +27,49 @@ const categories = [
 ];
 
 const CategoriesSelector = ({data, setData, filteredData, setFilteredData}) => {
-  const [categoriesSelected, setCategoriesSelected] = useState([]);
+  const [categoriesSelected, setCategoriesSelected] = useState("");
 
-  const handleChange = async (event) => {
+  useEffect(()=>{
+        setFilteredData(data);
+  },[categoriesSelected])
+function timeout(ms){
+return new Promise((resolve) => setTimeout(resolve, ms));
+}
+  useEffect(()=>{
+  let isCancelled = false;
+  const filterData = async () => {
+           if(categoriesSelected.length !== 0){
+             if(!isCancelled){
+                 await setFilteredData(data) && timeout(1000);
+                 const aux = filteredData.filter(registro => categoriesSelected == registro.categoria.nombre);
+                 setFilteredData(aux);
+             }
+           }
+  }
+    filterData();
+    return () => {
+    isCancelled = true;
+    }
+  }, [categoriesSelected, filteredData])
+
+  const handleChange = (event) => {
     setCategoriesSelected(event.target.value);
-    await setFilteredData(data);
-        console.log(filteredData, ' filtered dataaaa 1')
-
-    const aux = filteredData.filter(registro => event.target.value.includes(registro.categoria.nombre));
-    setFilteredData(aux);
-    console.log(filteredData, ' filtered dataaaa 2')
   };
 
   return (
     <div>
-      <FormControl sx={{ m: 2, minWidth: 200 }}>
+      <FormControl sx={{ m: 2, minWidth: 150 }}>
         <InputLabel id="demo-multiple-checkbox-label">Filtrar por deporte</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
-          multiple
           value={categoriesSelected}
           onChange={handleChange}
           input={<OutlinedInput label="Filtrar por deporte" />}
-          renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >
           {categories.map((category) => (
             <MenuItem key={category} value={category}>
-              <Checkbox checked={categoriesSelected.indexOf(category) > -1} />
               <ListItemText primary={category} />
             </MenuItem>
           ))}

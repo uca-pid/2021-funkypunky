@@ -14,5 +14,4 @@
     root: {
     padding: 25
     }
-
 };

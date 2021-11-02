@@ -25,24 +25,15 @@ const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
-    console.log(filteredData, 'filteredData from trianings!!!')
-
-useEffect(()=>{
-setFilteredData(data)
-}, [data, setData]);
+const [categoriesSelected, setCategoriesSelected] = useState([]);
 
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
         const token = localStorage.jwtToken
         const decoded = jwt_decode(token);
         const usuario = decoded.sub;
-        console.log(usuario, 'decoded')
         setUsername(usuario);
-         console.log(username, ' username')
-
         setForm({...form, usuario: decoded.sub});
-        console.log(username, ' username')
-        console.log( form, 'form')
   }
   peticionGet();
  }, [username])
@@ -51,6 +42,7 @@ const peticionGet = async () =>{
   setLoading(true);
  await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
   setData(response.data);
+  setFilteredData(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
@@ -61,9 +53,7 @@ const peticionGet = async () =>{
   console.log(error.message);
 })
 setLoading(false);
-console.log(loading, ' loadingg')
 }
-  console.log(data, 'data')
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
@@ -132,7 +122,6 @@ setForm({
   };
 
   const handleEditarEntrenamiento = (entrenamiento) =>{
-  console.log(entrenamiento, 'entrenamiento!!')
   seleccionarEntrenamiento(entrenamiento);
   handleModalInsertar()
   }
@@ -186,7 +175,7 @@ setForm({
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
                     //<option disable>  </option>
-                    {categorias.map(cat => (
+                    {filteredData.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
