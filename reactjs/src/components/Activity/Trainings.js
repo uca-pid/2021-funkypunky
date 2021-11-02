@@ -25,10 +25,7 @@ const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
-
-useEffect(()=>{
-setFilteredData(data)
-}, [data, setData]);
+const [categoriesSelected, setCategoriesSelected] = useState([]);
 
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
@@ -36,7 +33,6 @@ setFilteredData(data)
         const decoded = jwt_decode(token);
         const usuario = decoded.sub;
         setUsername(usuario);
-
         setForm({...form, usuario: decoded.sub});
   }
   peticionGet();
@@ -46,6 +42,7 @@ const peticionGet = async () =>{
   setLoading(true);
  await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
   setData(response.data);
+  setFilteredData(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
@@ -182,7 +179,7 @@ setForm({
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
                     //<option disable>  </option>
-                    {categorias.map(cat => (
+                    {filteredData.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
