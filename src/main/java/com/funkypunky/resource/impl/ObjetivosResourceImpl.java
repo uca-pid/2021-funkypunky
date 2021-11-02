@@ -1,5 +1,6 @@
 package com.funkypunky.resource.impl;
 
+import com.funkypunky.domain.MetaTotal;
 import com.funkypunky.domain.Objetivo;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.ObjetivoRepository;
@@ -45,7 +46,7 @@ public class ObjetivosResourceImpl {
 
 	@GetMapping("/getProgresoObjetivo")
 	@ResponseBody
-	public Collection<Object> getObjetivoByUserAndPeriod(@RequestParam String user_email, @RequestParam String yearMonthPeriodStart, @RequestParam String yearMonthPeriodEnd) {
+	public List<MetaTotal> getObjetivoByUserAndPeriod(@RequestParam String user_email, @RequestParam String yearMonthPeriodStart, @RequestParam String yearMonthPeriodEnd) {
 
 		User user = null;
 		YearMonth yearMonthStart = YearMonth.parse(yearMonthPeriodStart);
@@ -56,43 +57,29 @@ public class ObjetivosResourceImpl {
 		}
 		float acum_objetivo = 0f;
 		float acum_objetivo_logrado = 0f;
-		Map<YearMonth,Object> period_sum = new HashMap<>();
-		YearMonth actualMonth = yearMonthStart;
+		List<MetaTotal> period_sum = new ArrayList<>();
 
-		while(!yearMonthEnd.equals(actualMonth)) {
+		YearMonth actualMonth = yearMonthStart;
+		MetaTotal metaTotal = new MetaTotal();
+
+		do{
 			Collection<Objetivo> objetivo = objetivoService.findByUserAndPeriodRange(user, actualMonth, actualMonth);
 			for (Objetivo objetivo1 : objetivo) {
-				acum_objetivo += objetivo1.getProgressCalory();
+				acum_objetivo += (metricasResource.getCaloriesInRange(user_email,actualMonth.toString(),actualMonth.toString()).get(objetivo1.getPeriod()));
 				acum_objetivo_logrado += objetivo1.getTargetCaloryCount();
 			}
-			period_sum.put(actualMonth,"{\"period\":"+actualMonth+",\"progressCalory\":"+acum_objetivo_logrado+",\"targetCaloryCount\":"+acum_objetivo+"}");
+			metaTotal.setProgressCalory(acum_objetivo_logrado);
+			metaTotal.setTargetCaloryCount(acum_objetivo);
+			metaTotal.setPeriod(actualMonth);
+			period_sum.add(metaTotal);
+
 			actualMonth = actualMonth.plusMonths(1);
-		}
+			metaTotal = new MetaTotal();
+			acum_objetivo = 0;
+			acum_objetivo_logrado = 0;
+		} while(!yearMonthEnd.plusMonths(1).equals(actualMonth));
 
-		return period_sum.values();
-//		Collection<Objetivo> objetivo = objetivoService.findByUserAndPeriodRange(user, yearMonthStart, yearMonthEnd);
-//
-//		objetivo = objetivo.stream().sorted(Comparator.comparing(Objetivo::getPeriod)).collect(Collectors.toList());
-//		Collection<YearMonth> periodos = objetivo.stream().map(objetivo1 -> objetivo1.getPeriod()).collect(Collectors.toList());
-//
-//
-//		Map<String,Object> period_sum = new HashMap<>();
-//
-//
-//		for(Objetivo objetivo1: objetivo){
-//			String yearMonth = objetivo1.getPeriod().toString();
-//			Map<String,Object> temp_sum = new HashMap<>();
-//
-//			acum_objetivo += metricasResource.getCaloriesInRange(user_email,yearMonth,yearMonth).get(objetivo1.getPeriod());
-//			acum_objetivo_logrado += objetivo1.getTargetCaloryCount();
-//			period_sum.put("period",yearMonth);
-//			period_sum.put("progressCalory",acum_objetivo_logrado);
-//			period_sum.put("targetCaloryCount",acum_objetivo);
-//		}
-
-
-
-//		return objetivo;
+		return period_sum;
 	}
 
 	@GetMapping("/getProgresoMes")
