@@ -129,7 +129,7 @@ public class Application implements CommandLineRunner {
 			categoriaService.saveOrUpdate(categoria6);
 
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			Date date = dateFormat.parse("23/09/2021");
+			Date date = dateFormat.parse("03/11/2021");
 			long time = date.getTime();
 
 			entrenamiento1.setCategoria(categoria2);
@@ -154,7 +154,7 @@ public class Application implements CommandLineRunner {
 			entrenamiento3.setDuracion(15);
 			entrenamiento3.setDescription("Saltando la soga");
 
-			date = dateFormat.parse("23/07/2021");
+			date = dateFormat.parse("23/11/2021");
 			time = date.getTime();
 
 			entrenamiento4.setCategoria(categoria2);
@@ -164,7 +164,7 @@ public class Application implements CommandLineRunner {
 			entrenamiento4.setDescription("nicky jugando");
 
 
-			objetivo.setPeriod(YearMonth.parse("2021-09"));
+			objetivo.setPeriod(YearMonth.parse("2021-11"));
 			objetivo.setUser(user);
 			objetivo.setTargetCaloryCount(1200f);
 

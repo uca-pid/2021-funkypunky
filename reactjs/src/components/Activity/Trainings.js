@@ -27,6 +27,10 @@ const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
 const [categoriesSelected, setCategoriesSelected] = useState([]);
 
+useEffect(()=>{
+setFilteredData(data)
+}, [data, setData]);
+
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
         const token = localStorage.jwtToken
@@ -179,7 +183,7 @@ setForm({
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
                     //<option disable>  </option>
-                    {filteredData.map(cat => (
+                    {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
