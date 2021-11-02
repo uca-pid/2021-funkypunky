@@ -115,8 +115,8 @@ const peticionGetMes = async () =>{
 }).catch(error=>{
   console.log(error.message);
 })
-  setChartDataMes(chartData);
-  setChartLabelsMes(chartLabels);
+  setChartDataMes(chartDataMes);
+  setChartLabelsMes(chartLabelsMes);
 }
 
 const peticionDelete = () => {
@@ -171,7 +171,7 @@ const dataChart = {
 const dataChartMes = {
   labels: chartLabelsMes,
   datasets: [{
-    label: 'Ocultar/Mostrar',
+    label: '% (Calorias Consumidas / Calorias Objetivo) por Categoria',
     data: chartDataMes,
     backgroundColor: [
       'rgba(255, 99, 132, 0.2)',
