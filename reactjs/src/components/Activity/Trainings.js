@@ -25,6 +25,7 @@ const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
+const [categoriesSelected, setCategoriesSelected] = useState([]);
 
 useEffect(()=>{
 setFilteredData(data)
@@ -46,6 +47,7 @@ const peticionGet = async () =>{
   setLoading(true);
  await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
   setData(response.data);
+  setFilteredData(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
