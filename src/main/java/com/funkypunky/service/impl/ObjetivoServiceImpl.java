@@ -41,10 +41,10 @@ public class ObjetivoServiceImpl implements IService<Objetivo> {
 		return objetivoRepository.findByUserAndPeriod(user,period);
 	}
 
-	public String deleteByUserAndPeriod(User user, YearMonth period) {
+	public String deleteByUserAndPeriod(User user, YearMonth period, Categoria categoria) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			objetivoRepository.deleteByUserAndPeriod(user,period);
+			objetivoRepository.deleteByUserAndPeriod(user,period,categoria);
 			jsonObject.put("message", "Objetivo deleted successfully");
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -71,4 +71,12 @@ public class ObjetivoServiceImpl implements IService<Objetivo> {
     public Collection<Objetivo> findByUserAndPeriodRange(User user, YearMonth yearMonthStart, YearMonth yearMonthEnd) {
 		return objetivoRepository.findByUserAndPeriodRange(user, yearMonthStart, yearMonthEnd);
     }
+
+    public Optional<Objetivo> findByUserAndPeriodAndCategory(User user, YearMonth period, Categoria categoria) {
+		return objetivoRepository.findByUserAndPeriodAndCategory(user,period,categoria);
+    }
+
+	public Collection<Objetivo> findByUserAndYearMonth(User user, YearMonth yearMonth1) {
+		return objetivoRepository.findByUserAndMonth(user,yearMonth1);
+	}
 }

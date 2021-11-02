@@ -22,6 +22,11 @@ public class Objetivo {
 	@Column(nullable = false)
 	private YearMonth period;
 
+	@ManyToOne
+	@JoinColumn (name = "category_id", nullable = false)
+	private Categoria categoria;
+
+
 	@Column(nullable = false)
 	private Float targetCaloryCount;
 

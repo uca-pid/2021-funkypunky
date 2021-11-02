@@ -107,4 +107,32 @@ public class MetricasResourceImpl {
 		return resultado;
 	}
 
+
+	public Float getCaloriesInMonthAndCategory(String user_email, YearMonth objectiveYearMonth1, Categoria categoria) {
+		User user = null;
+		if (userService.findByEmail(user_email).isPresent()) {
+			user = userService.findByEmail(user_email).get();
+		}
+
+		Calendar cal = Calendar.getInstance();
+
+		Collection<Entrenamiento> entrenamientos = entrenamientoRepository.findByUser(user);
+
+		Collection<Entrenamiento> categoria_cal = entrenamientos.stream().filter((entrenamiento -> {
+			cal.setTimeInMillis(entrenamiento.getStartTime().getTime());
+			return cal.get(Calendar.YEAR) >= objectiveYearMonth1.getYear()
+					&& (cal.get(Calendar.MONTH)+1) >= objectiveYearMonth1.getMonthValue();
+		})).collect(Collectors.toList());
+
+
+		Float resultado = 0f;
+		for(Entrenamiento entrenamiento: categoria_cal){
+				if(entrenamiento.getCategoria().equals(categoria)){
+					resultado += entrenamiento.getCaloriasQuemadas();
+				}
+		}
+
+		return resultado;
+
+	}
 }

@@ -167,6 +167,7 @@ public class Application implements CommandLineRunner {
 			objetivo.setPeriod(YearMonth.parse("2021-11"));
 			objetivo.setUser(user);
 			objetivo.setTargetCaloryCount(1200f);
+			objetivo.setCategoria(categoria2);
 
 
 			objetivoService.saveOrUpdate(objetivo);
