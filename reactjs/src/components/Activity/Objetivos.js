@@ -23,13 +23,17 @@ const [objetivos, setObjetivos] = useState([]);
 const [modalInsertar, setModalInsertar] = useState(false);
 const [modalEliminar, setModalEliminar] = useState(false);
 const [username, setUsername] = useState('');
-const [form, setForm] = useState({ id:'', usuario: '', periodo:'', objetivo:''})
+const [form, setForm] = useState({ id:'', usuario: '', periodo:'', objetivo:'', categoria:''})
 const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [inicio, setInicio] = useState();
 const [fin, setFin] = useState();
 const [chartData, setChartData] = useState([]);
 const [chartLabels, setChartLabels] = useState([]);
+const [dataMes, setDataMes] = useState([]);
+const [chartDataMes, setChartDataMes] = useState([]);
+const [chartLabelsMes, setChartLabelsMes] = useState([]);
+const [mes, setMes] = useState();
 
 // INICIO
 
@@ -66,6 +70,7 @@ const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
  delete form.id;
  await axios.post(BASE_DEV_URL + 'rest/objetivos/agregarObjetivo',{
+                                                              'id_categoria': parseInt(form.categoria),
                                                               'objetivo': parseInt(form.objetivo),
                                                               'usuario': username,
                                                               "periodo": form.periodo}).then(response=> {
@@ -75,6 +80,7 @@ setForm({...form, usuario: username}); // {auth.username}
 
 const peticionPut = () => {
   axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
+                                                                'id_categoria': parseInt(form.categoria),
                                                                 'objetivo': parseInt(form.objetivo),
                                                                 'usuario': username,
                                                                 "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })}
@@ -94,6 +100,22 @@ const peticionGetRango = async () =>{
 })
   setChartData(chartData);
   setChartLabels(chartLabels);
+}
+
+const peticionGetMes = async () =>{
+  const chartDataMes = [];
+  const chartLabelsMes = [];
+ await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoMes?user_email=" + username +"&"+"yearMonth="+mes).then(response=>{
+  setDataMes(response.data);
+  for(const obj of response.data){
+    chartLabelsMes.push(obj.categoria.nombre);
+    chartDataMes.push(parseInt(obj.progressCalory)/parseInt(obj.targetCaloryCount) * 100 );
+  }
+}).catch(error=>{
+  console.log(error.message);
+})
+  setChartDataMes(chartDataMes);
+  setChartLabelsMes(chartLabelsMes);
 }
 
 const peticionDelete = () => {
@@ -145,6 +167,44 @@ const dataChart = {
   }]
 };
 
+const dataChartMes = {
+  labels: chartLabelsMes,
+  datasets: [{
+    label: '% (Calorias Consumidas / Calorias Objetivo) por Categoria',
+    data: chartDataMes,
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+    ],
+    borderColor: [
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+    ],
+    borderWidth: 1
+  }]
+};
+
+
 const options = {
   scales: {
     yAxes: [
@@ -173,7 +233,8 @@ setTipoModal('actualizar');
 setForm({        id: objetivo.id,
                  usuario: username, // {auth.username}
                  periodo: objetivo.period,
-                 objetivo: objetivo.targetCaloryCount
+                 objetivo: objetivo.targetCaloryCount,
+                 categoria: objetivo.categoria.id
                  })
 }
 
@@ -215,10 +276,27 @@ setForm({
           Obtener % Cals/Obj
         </button>
    </div>
+   <br/><br/>
+   <h3>General de Objetivos por Mes</h3>
+   <br/>
   <Bar data={dataChart} options={options} />
+  <br/>
+  <h3>Descripcion de Categorias en el Mes</h3>
+  <div style={{display:'inline-block'}}>
+  Mes:
+  <input  value={mes} onInput={e => setMes(e.target.value)} className="form-control" required type="month" name="mes" id="mes" />
+  <br/>
+  <button className="btn btn-primary" onClick={peticionGetMes}>Ver en Detalle</button>
+  </div>
+  <Bar data={dataChartMes} options={options} />
+  <br/>
+  <br/>
+  <h3>Gestion de Objetivos</h3>
+  <br/>
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
+          <th>Categoria</th>
           <th>Calorias a Quemar</th>
           <th>Mes y Año</th>
           <th> </th>
@@ -231,6 +309,7 @@ setForm({
             if (objetivo.period > date){
           return(
           <tr key={objetivo.id}>
+          <td>{objetivo.categoria.nombre}</td>
           <td>{objetivo.targetCaloryCount}</td>
           <td>{objetivo.period}</td>
           <td>
@@ -243,6 +322,7 @@ setForm({
         }else{
           return(
           <tr key={objetivo.id}>
+          <td>{objetivo.categoria.nombre}</td>
           <td>{objetivo.targetCaloryCount}</td>
           <td>{objetivo.period}</td>
           <td>
@@ -260,6 +340,14 @@ setForm({
                 </ModalHeader>
                 <ModalBody>
                   <div className="form-group">
+                   <label htmlFor="categoria">Categoria</label>
+                   <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
+                   //<option disable>  </option>
+                   {categorias.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                  ))}
+                   </select>
+                    <br/>
                     <label htmlFor="objetivo">Objetivo (Cals. a Quemar)</label>
                     <input className="form-control" min='0' required type="number" name="objetivo" id="objetivo" onChange={handleChange} value={form?form.objetivo: ''}/>
                     <br />

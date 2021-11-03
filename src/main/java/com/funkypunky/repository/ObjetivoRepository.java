@@ -23,12 +23,18 @@ public interface ObjetivoRepository extends JpaRepository<Objetivo, Long> {
 
     @Transactional
     @Modifying
-    @Query("delete FROM Objetivo WHERE user=:user AND period=:period")
-    void deleteByUserAndPeriod(@Param("user") User user, @Param("period") YearMonth period );
+    @Query("delete FROM Objetivo WHERE user=:user AND categoria=:categoria AND period=:period")
+    void deleteByUserAndPeriod(@Param("user") User user, @Param("period") YearMonth period,@Param("categoria") Categoria categoria );
 
     @Query("FROM Objetivo WHERE user=:user")
     Collection<Objetivo> findHistoryByUser(@Param("user") User user);
 
-    @Query("FROM Objetivo WHERE user=:user AND period BETWEEN :yearMonthStart AND :yearMonthEnd")
-    Collection<Objetivo> findByUserAndPeriodRange(User user, YearMonth yearMonthStart, YearMonth yearMonthEnd);
+    @Query("FROM Objetivo o WHERE o.user=:user AND period BETWEEN :yearMonthStart AND :yearMonthEnd")
+    Collection<Objetivo> findByUserAndPeriodRange(@Param("user") User user,@Param("yearMonthStart") YearMonth yearMonthStart,@Param("yearMonthEnd") YearMonth yearMonthEnd);
+
+    @Query("FROM Objetivo o WHERE o.user=:user AND period=:yearMonth")
+    Collection<Objetivo> findByUserAndMonth(@Param("user") User user,@Param("yearMonth") YearMonth yearMonth);
+
+    @Query("FROM Objetivo o WHERE o.user=:user AND o.categoria=:categoria AND o.period=:period")
+    Optional<Objetivo> findByUserAndPeriodAndCategory(@Param("user") User user,@Param("period") YearMonth period,@Param("categoria") Categoria categoria);
 }

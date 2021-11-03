@@ -2,7 +2,6 @@ package com.funkypunky.resource.impl;
 
 import com.funkypunky.domain.Categoria;
 import com.funkypunky.domain.Editable;
-import com.funkypunky.domain.Entrenamiento;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.CategoriaRepository;
 import com.funkypunky.repository.EntrenamientoRepository;
@@ -16,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 

@@ -1,7 +1,5 @@
 package com.funkypunky.resource.impl;
 
-import com.funkypunky.domain.Categoria;
-import com.funkypunky.domain.Editable;
 import com.funkypunky.domain.Entrenamiento;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.EntrenamientoRepository;
@@ -13,7 +11,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

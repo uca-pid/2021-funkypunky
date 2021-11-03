@@ -1,8 +1,5 @@
 package com.funkypunky.service.impl;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.funkypunky.domain.Role;
 import com.funkypunky.repository.RoleRepository;
 import com.funkypunky.service.IRoleService;
@@ -10,6 +7,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Optional;
 
 
 @Service

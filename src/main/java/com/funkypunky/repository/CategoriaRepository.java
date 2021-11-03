@@ -1,7 +1,6 @@
 package com.funkypunky.repository;
 
 import com.funkypunky.domain.Categoria;
-import com.funkypunky.domain.Editable;
 import com.funkypunky.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

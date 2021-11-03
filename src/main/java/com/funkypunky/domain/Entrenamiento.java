@@ -2,7 +2,6 @@ package com.funkypunky.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.joda.time.Interval;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

@@ -1,12 +1,9 @@
 package com.funkypunky.config;
 
-import java.io.Serializable;
-import java.util.Base64;
-import java.util.Date;
-
-import javax.annotation.PostConstruct;
-
 import com.funkypunky.domain.Role;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
+import java.util.Base64;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider implements Serializable {
@@ -33,7 +30,7 @@ public class JwtTokenProvider implements Serializable {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	private long validityInMilliseconds = 50 * 60 * 60; // 2 minute
+	private long validityInMilliseconds = 50 * 60 * 60 * 8; // 2 minute (* 8 min) = 16 min
 
 	public String createToken(String username, Role role) {
 		Claims claims = Jwts.claims().setSubject(username);
