@@ -1,7 +1,6 @@
 package com.funkypunky.resource.impl;
 
 import com.funkypunky.domain.Categoria;
-import com.funkypunky.domain.Editable;
 import com.funkypunky.domain.Entrenamiento;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.CategoriaRepository;
