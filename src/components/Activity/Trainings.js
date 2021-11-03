@@ -1,5 +1,5 @@
 import authToken from "../../utils/authToken";
-import React, { Component } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,133 +8,141 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import Timestamp from 'react-timestamp'
 import {BASE_DEV_URL} from "../../utils/constants.js";
+import CategoriesSelector from './CategoriesSelector.js'
+import { useSelector } from "react-redux";
 
 
 // {auth.username}`
 
-class Trainings extends Component {
-state={
-  data:null,
-  categorias: [],
-  modalInsertar: false,
-  modalEliminar: false,
-  username:'',
-  form:{
-    id:'',
-    usuario: '', // {auth.username}
-    description:'',
-    categoria:'',
-    fecha:'',
-    hora:'',
-    duracion:'',
+const Trainings = () => {
+
+const [data, setData] = useState([]);
+const [categorias, setCategorias] = useState([]);
+const [modalInsertar, setModalInsertar] = useState(false);
+const [modalEliminar, setModalEliminar] = useState(false);
+const [username, setUsername] = useState('');
+const [form, setForm] = useState({ id:'', usuario: '', description:'', categoria:'', fecha:'', hora:'', duracion:''})
+const [tipoModal, setTipoModal] = useState();
+const [loading, setLoading] = useState(true);
+const [filteredData, setFilteredData] = useState(data);
+const [categoriesSelected, setCategoriesSelected] = useState([]);
+
+useEffect(()=>{
+setFilteredData(data)
+}, [data, setData]);
+
+ useEffect(() => {
+  if (localStorage && localStorage.jwtToken) {
+        const token = localStorage.jwtToken
+        const decoded = jwt_decode(token);
+        const usuario = decoded.sub;
+        setUsername(usuario);
+        setForm({...form, usuario: decoded.sub});
   }
-}
+  peticionGet();
+ }, [username])
 
-
-
-peticionGet= async () =>{
- await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+this.state.username).then(response=>{
-  this.setState({data: response.data});
+const peticionGet = async () =>{
+  setLoading(true);
+ await axios.get(BASE_DEV_URL + "rest/entrenamiento/entrenamientoByUser?user_email="+ username).then(response=>{
+  setData(response.data);
+  setFilteredData(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
- await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
-  this.setState({categorias: response.data});
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
+  setCategorias(response.data);
+
 }).catch(error=>{
   console.log(error.message);
 })
+setLoading(false);
 }
 
-peticionPost=async()=>{
-this.state.form.usuario = this.state.username; // {auth.username}
-  delete this.state.form.id;
- await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria':parseInt(this.state.form.categoria),
-                                                              'descripcion':this.state.form.description,
-                                                              'duracion':parseInt(this.state.form.duracion),
-                                                              'usuario': this.state.username,
-                                                              'fecha':this.state.form.fecha}).then(response=>{
-    this.modalInsertar();
-    this.peticionGet();
-  }).catch(error=>{
-    console.log(error.message);
-  })
-}
+const peticionPost = async () => {
+setForm({...form, usuario: username}); // {auth.username}
+ delete form.id;
+ await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria': parseInt(form.categoria),
+                                                              'descripcion': form.description,
+                                                              'duracion': parseInt(form.duracion),
+                                                              'usuario': username,
+                                                              'fecha':form.fecha}).then(response=> {
+                                                                                        handleModalInsertar();
+                                                                                        peticionGet();
+                                                                                        }).catch(error=>{ console.log(error.message); })}
 
-peticionPut=()=>{
-console.log(this.state.form)
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id':this.state.form.id,
-                                                         'id_categoria':parseInt(this.state.form.categoria),
-                                                         'descripcion':this.state.form.description,
-                                                         'duracion':parseInt(this.state.form.duracion),
-                                                         'usuario': this.state.username,
-                                                         'fecha':this.state.form.fecha,}).then(response=>{
-      this.modalInsertar();
-      this.peticionGet();
-    })
-}
-
-peticionDelete=()=>{
-  console.log(this.state.form.id)
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento',{'id':this.state.form.id}).then(response=>{
-    this.setState({modalEliminar: false});
-    this.peticionGet();
-  })
-}
-
-modalInsertar=()=>{
-  this.setState({modalInsertar: !this.state.modalInsertar});
-}
-
-seleccionarentrenamiento=(entrenamiento)=>{
-  this.setState({
-    tipoModal: 'actualizar',
-    form: {
-        id:entrenamiento.id,
-        usuario:this.state.username, // {auth.username}
-        description:entrenamiento.description,
-        categoria:entrenamiento.categoria.id,
-        fecha:entrenamiento.startTime,
-        hora:entrenamiento.endTime,
-        duracion:entrenamiento.duracion,
-        calorias: entrenamiento.categoria.calPerMin,
-    }
-  })
-}
-
-handleChange=async e=>{
-e.persist();
-await this.setState({
-  form:{
-    ...this.state.form,
-    [e.target.name]: e.target.value
+const peticionPut = () => {
+  if(form.fecha.length == 29){
+    form.fecha = form.fecha.slice(0, 16);
   }
-});
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
+                                                         'id_categoria':parseInt(form.categoria),
+                                                         'descripcion': form.description,
+                                                         'duracion':parseInt(form.duracion),
+                                                         'usuario': username,
+                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  }
 
+const peticionDelete = () => {
+  axios.post(BASE_DEV_URL + 'rest/entrenamiento/eliminarEntrenamiento', {'id':form.id}).then(response=>{
+    setModalEliminar(false)
+    peticionGet();
+  })
 }
-
-
-  componentWillMount() {
   if (localStorage.jwtToken) {
-        authToken(localStorage.jwtToken);
-        var token = localStorage.jwtToken
-        var decoded = jwt_decode(token);
-        this.state.username = decoded.sub;
-        this.state.form.usuario = decoded.sub;
-  }
-    this.peticionGet();
+    authToken(localStorage.jwtToken);
   }
 
-  render(){
-    const {form}=this.state;
-        if (!this.state.data || !this.state.categorias) {
-                    return (
-                    <div style={{color: 'white'}}>Cargando datos...</div>)
-        }else{
+const auth = useSelector((state) => state.auth);
 
-  return (
+
+
+
+const handleModalInsertar = () => {
+  setModalInsertar(!modalInsertar);
+}
+
+const seleccionarEntrenamiento = (entrenamiento) => {
+setTipoModal('actualizar');
+setForm({        id: entrenamiento.id,
+                 usuario: username, // {auth.username}
+                 description: entrenamiento.description,
+                 categoria: entrenamiento.categoria.id,
+                 fecha: entrenamiento.startTime,
+                 hora: entrenamiento.endTime,
+                 duracion: entrenamiento.duracion,
+                 calorias: entrenamiento.categoria.calPerMin,
+                 })
+}
+
+const handleChange = async e => {
+e.persist();
+setForm({
+    ...form,
+    [e.target.name]: e.target.value
+  })
+};
+
+  const handleAgregarEntrenamiento = (entrenamiento) =>{
+  setForm({});
+  setTipoModal('insertar');
+  handleModalInsertar()
+  };
+
+  const handleEditarEntrenamiento = (entrenamiento) =>{
+  seleccionarEntrenamiento(entrenamiento);
+  handleModalInsertar()
+  }
+
+  const handleEliminarEntrenamiento = (entrenamiento) =>{
+  seleccionarEntrenamiento(entrenamiento);
+  setModalEliminar(true)
+  }
+
+  return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
-
-  <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar entrenamiento</button>
+  <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
+      <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData}/>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -148,7 +156,7 @@ await this.setState({
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
-        {this.state.data.map(entrenamiento=>{
+        {filteredData.map(entrenamiento => {
           return(
           <tr key={entrenamiento.id}>
           <td>{entrenamiento.categoria.nombre}</td>
@@ -157,67 +165,60 @@ await this.setState({
           <td>{entrenamiento.duracion}</td>
           <td>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
           <td>
-                <button className="btn btn-primary" onClick={()=>{this.seleccionarentrenamiento(entrenamiento); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
+                <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
-                <button className="btn btn-danger" onClick={()=>{this.seleccionarentrenamiento(entrenamiento); this.setState({modalEliminar: true})}}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
           </tr>
           )
-        })}
+        }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>
-
-
-    <Modal isOpen={this.state.modalInsertar}>
+    <Modal isOpen={modalInsertar}>
                 <ModalHeader style={{display: 'block'}}>
-                  <span style={{float: 'right'}} onClick={()=>this.modalInsertar()}>x</span>
+                  <span style={{float: 'right'}} onClick={handleModalInsertar}>x</span>
                 </ModalHeader>
                 <ModalBody>
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
-                    <select className="form-control" name='categoria' id='categoria' required onChange={this.handleChange} value={form?form.categoria: ''}>
-                    <option disable>  </option>
-                    {this.state.categorias.map(cat => (
+                    <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
+                    //<option disable>  </option>
+                    {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}
                     </select>
                     <br />
                     <label htmlFor="description">Descripcion</label>
-                    <input className="form-control" required type="text" name="description" id="description" maxLength="50" onChange={this.handleChange} value={form?form.description: ''}/>
+                    <input className="form-control" required type="text" name="description" id="description" maxLength="50" onChange={handleChange} value={form?form.description: ''}/>
                     <br />
                     <label htmlFor="fecha">Fecha y Hora de Inicio</label>
-                    <input className="form-control" required type="datetime-local" name="fecha" id="fecha" onChange={this.handleChange} value={form?form.fecha: ''}/>
+                    <input className="form-control" required type="datetime-local" name="fecha" id="fecha" onChange={handleChange} value={form?form.fecha: ''}/>
                     <br />
                     <label htmlFor="duracion">Duracion (en min.)</label>
-                    <input className="form-control" required type="number" name="duracion" id="duracion" onChange={this.handleChange} value={form?form.duracion: ''}/>
+                    <input className="form-control" required type="number" name="duracion" id="duracion" onChange={handleChange} value={form?form.duracion: ''}/>
                     <br />
                   </div>
                 </ModalBody>
-
                 <ModalFooter>
-                  {this.state.tipoModal=='insertar'?
-                    <button className="btn btn-success" onClick={()=>this.peticionPost()}>
+                  {tipoModal==='insertar'?
+                    <button className="btn btn-success" onClick={()=>peticionPost()}>
                     Insertar
-                  </button>: <button className="btn btn-primary" onClick={()=>this.peticionPut()}>
+                  </button>: <button className="btn btn-primary" onClick={()=>peticionPut()}>
                     Actualizar
                   </button>
                   }
-                    <button className="btn btn-danger" onClick={()=>this.modalInsertar()}>Cancelar</button>
+                    <button className="btn btn-danger" onClick={handleModalInsertar}>Cancelar</button>
                 </ModalFooter>
           </Modal>
-
-
-          <Modal isOpen={this.state.modalEliminar}>
+          <Modal isOpen={modalEliminar}>
             <ModalBody>
                Estás seguro que deseas eliminar al entrenamiento {form && form.description}
             </ModalBody>
             <ModalFooter>
-              <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>
-              <button className="btn btn-secundary" onClick={()=>this.setState({modalEliminar: false})}>No</button>
+              <button className="btn btn-danger" onClick={peticionDelete}>Sí</button>
+              <button className="btn btn-secundary" onClick={()=>setModalEliminar(false)}>No</button>
             </ModalFooter>
           </Modal>
   </div>
-  );}
-}
 }
 export default Trainings;

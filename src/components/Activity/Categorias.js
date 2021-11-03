@@ -7,8 +7,23 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import jwt_decode from "jwt-decode";
 import {BASE_DEV_URL} from "../../utils/constants.js";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 
+const MySwal = withReactContent(Swal);
+
+function swalAlert(){
+    MySwal.fire({
+      title: <p>Hello Funky Punky</p>,
+      footer: 'Copyright 2021',
+      didOpen: () => {
+        MySwal.clickConfirm()
+      }
+    }).then(() => {
+      return MySwal.fire(<p>No puedes crear 2 categorias con el mismo nombre</p>)
+    })
+}
 
 class Trainings extends Component {
 state={
@@ -23,24 +38,40 @@ state={
     user_mail: '',
   }
 }
+
+
+
+
 // +{auth.username} en .get -> consulta por user o all (para las fijas)
 peticionGet= async () =>{
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
+  console.log(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
 }
 
 peticionPost=async()=>{
-this.state.form.user_mail = this.state.username; // {auth.username}
-  delete this.state.form.id;
- await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
-    this.modalInsertar();
-    this.peticionGet();
-  }).catch(error=>{
-    console.log(error.message);
-  })
+ this.state.form.user_mail = this.state.username; // {auth.username}
+ delete this.state.form.id;
+ var bandera = 1;
+ for(const obj of this.state.data){
+     if (obj.nombre == this.state.form.nombre){
+        bandera = 0;
+     }
+   }
+ if(bandera){
+    await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
+        this.modalInsertar();
+        this.peticionGet();
+      }).catch(error=>{
+        console.log(error.message);
+      })
+ }else{
+ swalAlert();
+ }
+
 }
 
 peticionPut=()=>{
@@ -94,6 +125,7 @@ await this.setState({
     }
     this.peticionGet();
   }
+
 
 
   render(){
@@ -189,7 +221,10 @@ await this.setState({
 
           <Modal isOpen={this.state.modalEliminar}>
             <ModalBody>
-               Estás seguro que deseas eliminar a la categoria {form && form.nombre}
+            Al eliminar {form && form.nombre}, se eliminaran TODOS sus entrenamientos.
+            <br/>
+            <br/>
+            Continuar?
             </ModalBody>
             <ModalFooter>
               <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>

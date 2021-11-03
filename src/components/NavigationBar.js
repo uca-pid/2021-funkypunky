@@ -41,6 +41,9 @@ const NavigationBar = () => {
         <Link to={"categorias"} className="nav-link">
             Categorias
         </Link>
+        <Link to={"objetivos"} className="nav-link">
+            Objetivos
+        </Link>
       </Nav>
       <Nav className="navbar-right">
         <Link to={"changePassword"} className="nav-link" >
@@ -57,7 +60,7 @@ const NavigationBar = () => {
 
   return (
     <Navbar bg="dark" variant="dark">
-      <Link to={auth.isLoggeIn ? "home" : ""} className="navbar-brand">
+      <Link to={"home"} className="navbar-brand">
         <img
           src="http://cdn.shopify.com/s/files/1/1061/1924/products/Flexed_Biceps_Emoji_Icon_ios10_grande.png?v=1571606090"
           width="25"
