@@ -46,7 +46,6 @@ state={
 peticionGet= async () =>{
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
-  console.log(response.data)
 }).catch(error=>{
   console.log(error.message);
 })

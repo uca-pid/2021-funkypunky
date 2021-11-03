@@ -31,7 +31,6 @@ const ChangePassword = () => {
 
 
   const changePassword = async () =>{
-  console.log({'username': username, 'password': inputValue})
    await axios.post(BASE_DEV_URL + 'rest/user/changeUserPw', {'username': username, 'password': inputValue}).then(response=>{
     return MySwal.fire('Se ha modificado correctamente')
 

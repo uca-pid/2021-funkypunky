@@ -4,7 +4,6 @@ package com.funkypunky.service.impl;
 import com.funkypunky.domain.Categoria;
 import com.funkypunky.domain.Objetivo;
 import com.funkypunky.domain.User;
-import com.funkypunky.repository.CategoriaRepository;
 import com.funkypunky.repository.ObjetivoRepository;
 import com.funkypunky.service.IService;
 import org.codehaus.jettison.json.JSONException;

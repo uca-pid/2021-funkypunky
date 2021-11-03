@@ -36,7 +36,6 @@ const Home = (props) => {
 const peticionGetProgressBarData = async () =>{
   const chartData = "";
  await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoObjetivo?user_email=" + auth.username + "&yearMonthPeriodStart="+ endDate + "&yearMonthPeriodEnd="+ endDate).then(response=>{
-  console.log(response.data[0], ' response data ')
   if(response.data[0].progressCalory !== null && response.data[0].targetCaloryCount !== null){
     let percentage = parseFloat((response.data[0].progressCalory)/parseInt(response.data[0].targetCaloryCount) * 100).toFixed(2);
       if(percentage  > 100){

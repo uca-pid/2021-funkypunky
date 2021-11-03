@@ -55,13 +55,11 @@ const peticionGet = async () =>{
   setLoading(true);
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
   setCategorias(response.data);
-  console.log(response.data)
 }).catch(error=>{
   console.log(error.message);
 })
 await axios.get(BASE_DEV_URL + "rest/objetivos/getHistorialObjetivo?user_email="+ username).then(response=>{
   setObjetivos(response.data);
-  console.log(response.data);
 }).catch(error=>{
   console.log(error.message);
 })
