@@ -11,9 +11,19 @@ import {BASE_DEV_URL} from "../../utils/constants.js";
 import CategoriesSelector from './CategoriesSelector.js'
 import { useSelector } from "react-redux";
 import { Bar } from 'react-chartjs-2';
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 // {auth.username}
+
+var todayLimit = new Date(),
+dateLimit = todayLimit.getFullYear() + '-' + (todayLimit.getMonth() + 1)
+
+const MySwal = withReactContent(Swal);
+
+function swalAlert(texto){
+    return MySwal.fire(texto)
+}
 
 const Objetivos = () => {
 
@@ -68,6 +78,11 @@ setLoading(false);
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
+if(form.periodo == '' || form.objetivo == '' || form.categoria == ''){
+        swalAlert("Hay campos vacios");
+        console.log()
+
+}else{
  delete form.id;
  await axios.post(BASE_DEV_URL + 'rest/objetivos/agregarObjetivo',{
                                                               'id_categoria': parseInt(form.categoria),
@@ -76,7 +91,10 @@ setForm({...form, usuario: username}); // {auth.username}
                                                               "periodo": form.periodo}).then(response=> {
                                                                                         handleModalInsertar();
                                                                                         peticionGet();
-                                                                                        }).catch(error=>{ console.log(error.message); })}
+                                                                                        }).catch(error=>{ console.log(error.message); })
+}
+
+ }
 
 const peticionPut = () => {
   axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
@@ -247,7 +265,7 @@ setForm({
 };
 
   const handleAgregarObjetivo = (objetivo) =>{
-  setForm({});
+  setForm({ id:'', usuario: '', periodo:'', objetivo:'', categoria:''});
   setTipoModal('insertar');
   handleModalInsertar()
   };
@@ -342,7 +360,7 @@ setForm({
                   <div className="form-group">
                    <label htmlFor="categoria">Categoria</label>
                    <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
-                   //<option disable>  </option>
+
                    {categorias.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                   ))}
@@ -352,7 +370,7 @@ setForm({
                     <input className="form-control" min='0' required type="number" name="objetivo" id="objetivo" onChange={handleChange} value={form?form.objetivo: ''}/>
                     <br />
                     <label htmlFor="periodo">Periodo (mes y año)</label>
-                    <input className="form-control" min='2021-10' required type="month" name="periodo" id="periodo" onChange={handleChange} value={form?form.periodo: ''}/>
+                    <input className="form-control" min={dateLimit} required type="month" name="periodo" id="periodo" onChange={handleChange} value={form?form.periodo: ''}/>
                     <br />
                   </div>
                 </ModalBody>

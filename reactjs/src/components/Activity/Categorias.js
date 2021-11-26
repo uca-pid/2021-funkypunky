@@ -13,16 +13,8 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-function swalAlert(){
-    MySwal.fire({
-      title: <p>Hello Funky Punky</p>,
-      footer: 'Copyright 2021',
-      didOpen: () => {
-        MySwal.clickConfirm()
-      }
-    }).then(() => {
-      return MySwal.fire(<p>No puedes crear 2 categorias con el mismo nombre</p>)
-    })
+function swalAlert(texto){
+    return MySwal.fire(texto)
 }
 
 class Trainings extends Component {
@@ -46,29 +38,36 @@ state={
 peticionGet= async () =>{
  await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+this.state.username).then(response=>{
   this.setState({data: response.data});
+  console.log(response.data)
+  console.log(this.state.form)
 }).catch(error=>{
   console.log(error.message);
 })
 }
 
 peticionPost=async()=>{
- this.state.form.user_mail = this.state.username; // {auth.username}
- delete this.state.form.id;
  var bandera = 1;
  for(const obj of this.state.data){
-     if (obj.nombre == this.state.form.nombre){
-        bandera = 0;
-     }
+    if(this.state.form.nombre == '' || this.state.form.calPerMin == ''){
+        swalAlert("Hay campos vacios");
+        console.log()
+    }else{
+    if (obj.nombre.toUpperCase() == this.state.form.nombre.toUpperCase()){
+            bandera = 0;
+            swalAlert("No puedes crear 2 categorias con el mismo nombre");
+         }
+    }
+
    }
  if(bandera){
+  this.state.form.user_mail = this.state.username; // {auth.username}
+  delete this.state.form.id;
     await axios.post(BASE_DEV_URL + 'rest/categorias/agregarCategoria',{'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'user_mail': this.state.form.user_mail}).then(response=>{
         this.modalInsertar();
         this.peticionGet();
       }).catch(error=>{
         console.log(error.message);
       })
- }else{
- swalAlert();
  }
 
 }
@@ -161,7 +160,7 @@ await this.setState({
 
     <h2 style={{color: "white"}}>Categorias Personalizadas</h2>
     <br />
-    <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Categoria</button>
+    <button className="btn btn-success" onClick={()=>{this.setState({ form:{id:'', nombre:'', calPerMin:'', user_mail: ''}, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Categoria</button>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>

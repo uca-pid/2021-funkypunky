@@ -10,9 +10,17 @@ import Timestamp from 'react-timestamp'
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import CategoriesSelector from './CategoriesSelector.js'
 import { useSelector } from "react-redux";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 
 // {auth.username}`
+
+const MySwal = withReactContent(Swal);
+
+function swalAlert(texto){
+    return MySwal.fire(texto)
+}
 
 const Trainings = () => {
 
@@ -61,15 +69,20 @@ setLoading(false);
 
 const peticionPost = async () => {
 setForm({...form, usuario: username}); // {auth.username}
- delete form.id;
- await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria': parseInt(form.categoria),
-                                                              'descripcion': form.description,
-                                                              'duracion': parseInt(form.duracion),
-                                                              'usuario': username,
-                                                              'fecha':form.fecha}).then(response=> {
-                                                                                        handleModalInsertar();
-                                                                                        peticionGet();
-                                                                                        }).catch(error=>{ console.log(error.message); })}
+if(form.categoria == '' || form.description == '' || form.duracion == '' || form.fecha == ''){
+        swalAlert("Hay campos vacios");
+ }else{
+  delete form.id;
+   await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria': parseInt(form.categoria),
+                                                                'descripcion': form.description,
+                                                                'duracion': parseInt(form.duracion),
+                                                                'usuario': username,
+                                                                'fecha':form.fecha}).then(response=> {
+                                                                                          handleModalInsertar();
+                                                                                          peticionGet();
+                                                                                          }).catch(error=>{ console.log(error.message); })
+ }
+ }
 
 const peticionPut = () => {
   if(form.fecha.length == 29){
@@ -124,7 +137,7 @@ setForm({
 };
 
   const handleAgregarEntrenamiento = (entrenamiento) =>{
-  setForm({});
+  setForm({ id:'', usuario: '', description:'', categoria:'', fecha:'', hora:'', duracion:''});
   setTipoModal('insertar');
   handleModalInsertar()
   };

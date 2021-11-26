@@ -9,6 +9,11 @@ import {styles} from'.././styles'
 import axios from "axios";
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import { Container, Row, Col } from 'react-grid-system';
+import jwt_decode from "jwt-decode";
+
+
+
+
 
 const PieChart = (props) => {
     const {
@@ -18,9 +23,11 @@ const PieChart = (props) => {
 
     const [categories, setCategories] = useState([]);
     const [values, setValues] = useState([]);
+    const [username, setUsername] = useState();
+    const [loading, setLoading] = useState(true);
 
     const peticionGetData = async () => {
-                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email=test@user.com&yearMonthStr="+ singleDate).then(response=> {
+                await axios.get(BASE_DEV_URL + "rest/metrics/userCategoryBreakdown?user_email="+username+"&yearMonthStr="+ singleDate).then(response=> {
                     setCategories(Object.keys(response.data));
                     setValues(Object.values(response.data));
                 }).catch(error=>{
@@ -35,14 +42,24 @@ const PieChart = (props) => {
   const auth = useSelector((state) => state.auth);
 
     useEffect(() => {
-    peticionGetData();
-    },[singleDate])
+                if (localStorage && localStorage.jwtToken) {
+                        const token = localStorage.jwtToken
+                        const decoded = jwt_decode(token);
+                        const usuario = decoded.sub;
+                        setUsername(usuario);
+                        if (username != ''){
+                            setLoading(false);
+                        }
+                }
+        peticionGetData();
+    },[singleDate, username])
 
     const onChangeStartDateHandler = (event) => {
     setSingleDate(event.target.value);
     }
 
-  return (
+  return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
+  (
     <div>
     <Container>
          <Row>

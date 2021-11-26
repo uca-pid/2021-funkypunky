@@ -22,20 +22,27 @@ const Home = (props) => {
     authToken(localStorage.jwtToken);
   }
   const auth = useSelector((state) => state.auth);
-    const [startDate, setStartDate] = useState(moment().subtract(1, 'months').format("YYYY-MM"));
+    const [startDate, setStartDate] = useState(moment().subtract(9, 'months').format("YYYY-MM"));
     const [endDate, setEndDate] = useState(moment().format("YYYY-MM"));
     const [singleDate, setSingleDate] = useState(moment().format("YYYY-MM"));
     const [progressBarData, setProgressBarData] = useState("0");
     const [data, setData] = useState();
-    const [username, setUsername] = useState('');
+    const [username, setUsername] = useState();
 
  useEffect(() => {
-  peticionGetProgressBarData();
+     if (localStorage && localStorage.jwtToken) {
+             const token = localStorage.jwtToken
+             const decoded = jwt_decode(token);
+             const usuario = decoded.sub;
+             setUsername(usuario);
+             peticionGetProgressBarData();
+       }
+
  }, [])
 
 const peticionGetProgressBarData = async () =>{
   const chartData = "";
- await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoObjetivo?user_email=" + auth.username + "&yearMonthPeriodStart="+ endDate + "&yearMonthPeriodEnd="+ endDate).then(response=>{
+ await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoObjetivo?user_email=" + username + "&yearMonthPeriodStart="+ endDate + "&yearMonthPeriodEnd="+ endDate).then(response=>{
   if(response.data[0].progressCalory !== null && response.data[0].targetCaloryCount !== null){
     let percentage = parseFloat((response.data[0].progressCalory)/parseInt(response.data[0].targetCaloryCount) * 100).toFixed(2);
       if(percentage  > 100){

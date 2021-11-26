@@ -9,6 +9,7 @@ import {styles} from'.././styles'
 import axios from "axios";
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import { Container, Row, Col } from 'react-grid-system';
+import jwt_decode from "jwt-decode";
 
 const LineChart = (props) => {
     const {
@@ -20,14 +21,15 @@ const LineChart = (props) => {
 
     const [categories, setCategories] = useState([]);
     const [values, setValues] = useState([]);
-
+    const [username, setUsername] = useState('');
+    const [loading, setLoading] = useState(true);
     const peticionGetData = async () => {
-                await axios.get(BASE_DEV_URL +"rest/metrics/caloriesInRange?user_email=test@user.com&rangeStart="+ startDate + "&rangeEnd=" + endDate).then(response=> {
-                    setCategories(Object.keys(response.data));
-                    setValues(Object.values(response.data));
-                }).catch(error=>{
-                    console.log(error.message);
-                })
+    await axios.get(BASE_DEV_URL +"rest/metrics/caloriesInRange?user_email="+username+"&rangeStart="+ startDate + "&rangeEnd=" + endDate).then(response=> {
+                        setCategories(Object.keys(response.data));
+                        setValues(Object.values(response.data));
+                    }).catch(error=>{
+                        console.log(error.message);
+                    })
             }
   if (localStorage.jwtToken) {
     authToken(localStorage.jwtToken);
@@ -36,8 +38,17 @@ const LineChart = (props) => {
     const auth = useSelector((state) => state.auth);
 
     useEffect(() => {
-    peticionGetData();
-    },[startDate, endDate])
+                if (localStorage && localStorage.jwtToken) {
+                        const token = localStorage.jwtToken
+                        const decoded = jwt_decode(token);
+                        const usuario = decoded.sub;
+                        setUsername(usuario);
+                        if (username != ''){
+                            setLoading(false);
+                        }
+                }
+        peticionGetData();
+    },[startDate, endDate, username])
 
     const onChangeStartDateHandler = (event) => {
     setStartDate(event.target.value);
@@ -46,7 +57,8 @@ const LineChart = (props) => {
     setEndDate(event.target.value);
     }
 
-      return (
+      return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
+      (
    <Container>
      <Row>
          <Col sm={4}>
