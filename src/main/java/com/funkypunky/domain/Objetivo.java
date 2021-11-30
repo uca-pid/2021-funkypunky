@@ -28,7 +28,7 @@ public class Objetivo {
 
 
 	@Column(nullable = false)
-	private Float targetCaloryCount;
+	private Float targetCaloryCount = 0f;
 
 	@Transient
 	@Setter
