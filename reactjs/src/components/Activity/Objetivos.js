@@ -360,7 +360,7 @@ setForm({
                   <div className="form-group">
                    <label htmlFor="categoria">Categoria</label>
                    <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
-
+                    <option disable>  </option>
                    {categorias.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                   ))}

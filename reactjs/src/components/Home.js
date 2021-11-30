@@ -38,12 +38,12 @@ const Home = (props) => {
              peticionGetProgressBarData();
        }
 
- }, [])
+ }, [username])
 
 const peticionGetProgressBarData = async () =>{
   const chartData = "";
  await axios.get(BASE_DEV_URL + "rest/objetivos/getProgresoObjetivo?user_email=" + username + "&yearMonthPeriodStart="+ endDate + "&yearMonthPeriodEnd="+ endDate).then(response=>{
-  if(response.data[0].progressCalory !== null && response.data[0].targetCaloryCount !== null){
+  if( response.data[0].progressCalory !== 0 && response.data[0].targetCaloryCount !== 0 ){
     let percentage = parseFloat((response.data[0].progressCalory)/parseInt(response.data[0].targetCaloryCount) * 100).toFixed(2);
       if(percentage  > 100){
           percentage = 100;

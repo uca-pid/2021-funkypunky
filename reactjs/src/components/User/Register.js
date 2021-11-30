@@ -25,16 +25,8 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-function swalAlert(){
-    MySwal.fire({
-      title: <p>Hello Funky Punky</p>,
-      footer: 'Copyright 2021',
-      didOpen: () => {
-        MySwal.clickConfirm()
-      }
-    }).then(() => {
-      return MySwal.fire(<p>Se ha enviado correctamente</p>)
-    })
+function swalAlert(texto){
+    MySwal.fire(texto);
 }
 
 const Register = (props) => {
@@ -69,7 +61,8 @@ const Register = (props) => {
         }, 2000);
       })
       .catch((error) => {
-        console.log(error);
+        swalAlert("Ya existe un usuario registrado con ese mail");
+        //console.log(error);
       });
   };
 
