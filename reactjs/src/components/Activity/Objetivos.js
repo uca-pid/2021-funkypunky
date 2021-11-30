@@ -1,6 +1,7 @@
 import authToken from "../../utils/authToken";
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
+import { Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +14,8 @@ import { useSelector } from "react-redux";
 import { Bar } from 'react-chartjs-2';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { withStyles } from '@mui/styles';
+import {styles} from'./styles'
 
 // {auth.username}
 
@@ -25,7 +28,10 @@ function swalAlert(texto){
     return MySwal.fire(texto)
 }
 
-const Objetivos = () => {
+const Objetivos = (props) => {
+    const {
+    classes
+    } = props;
 
 const [data, setData] = useState([]);
 const [categorias, setCategorias] = useState([]);
@@ -280,11 +286,12 @@ setForm({
   setModalEliminar(true)
   }
 
-  return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
-    <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
+  return loading ? <div >Cargando datos...</div> :
+    <div className={classes.root} className="App py-3 px-md-5">
+   <div className={classes.container}>
   <button className="btn btn-success" onClick={handleAgregarObjetivo}>Agregar objetivo</button>
   <br/>
-   <div style={{display:'inline-block'}}>
+   <div  style={{color: 'white', display:'inline-block'}}>
         Desde:
         <input value={inicio} onInput={e => setInicio(e.target.value)} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
         Hasta:
@@ -294,12 +301,15 @@ setForm({
           Obtener % Cals/Obj
         </button>
    </div>
-   <br/><br/>
-   <h3>General de Objetivos por Mes</h3>
+   </div>
+   <br/>
+   <Alert style={{ backgroundColor: "#343A40", color: "#ffffff80" }}>
+   <h3 style={{color: 'white'}}>General de Objetivos por Mes</h3>
    <br/>
   <Bar data={dataChart} options={options} />
+  </Alert>
   <br/>
-  <h3>Descripcion de Categorias en el Mes</h3>
+  <h3 style={{color: 'white'}}>Descripcion de Categorias en el Mes</h3>
   <div style={{display:'inline-block'}}>
   Mes:
   <input  value={mes} onInput={e => setMes(e.target.value)} className="form-control" required type="month" name="mes" id="mes" />
@@ -309,14 +319,14 @@ setForm({
   <Bar data={dataChartMes} options={options} />
   <br/>
   <br/>
-  <h3>Gestion de Objetivos</h3>
+  <h3 style={{color: 'white'}}>Gestion de Objetivos</h3>
   <br/>
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
-          <th>Categoria</th>
-          <th>Calorias a Quemar</th>
-          <th>Mes y Año</th>
+          <th style={{color: 'white'}}>Categoria</th>
+          <th style={{color: 'white'}}>Calorias a Quemar</th>
+          <th style={{color: 'white'}}>Mes y Año</th>
           <th> </th>
         </tr>
       </thead>
@@ -327,10 +337,10 @@ setForm({
             if (objetivo.period > date){
           return(
           <tr key={objetivo.id}>
-          <td>{objetivo.categoria.nombre}</td>
-          <td>{objetivo.targetCaloryCount}</td>
-          <td>{objetivo.period}</td>
-          <td>
+          <td style={{color: 'white'}}>{objetivo.categoria.nombre}</td>
+          <td style={{color: 'white'}}>{objetivo.targetCaloryCount}</td>
+          <td style={{color: 'white'}}>{objetivo.period}</td>
+          <td style={{color: 'white'}}>
                 <button className="btn btn-primary" onClick={() => handleEditarObjetivo(objetivo)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
                 <button className="btn btn-danger" onClick={() => handleEliminarObjetivo(objetivo)}><FontAwesomeIcon icon={faTrashAlt}/></button>
@@ -340,9 +350,9 @@ setForm({
         }else{
           return(
           <tr key={objetivo.id}>
-          <td>{objetivo.categoria.nombre}</td>
-          <td>{objetivo.targetCaloryCount}</td>
-          <td>{objetivo.period}</td>
+          <td style={{color: 'white'}}>{objetivo.categoria.nombre}</td>
+          <td style={{color: 'white'}}>{objetivo.targetCaloryCount}</td>
+          <td style={{color: 'white'}}>{objetivo.period}</td>
           <td>
                 <button className="btn btn-danger" onClick={() => handleEliminarObjetivo(objetivo)}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
@@ -396,4 +406,4 @@ setForm({
           </Modal>
   </div>
 }
-export default Objetivos;
+export default withStyles(styles)(Objetivos);
