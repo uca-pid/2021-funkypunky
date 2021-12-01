@@ -92,15 +92,12 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
 
 const peticionPut = () => {
-  if(form.fecha.length == 29){
-    form.fecha = form.fecha.slice(0, 16);
-  }
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
                                                          'descripcion': form.description,
                                                          'duracion':parseInt(form.duracion),
                                                          'usuario': username,
-                                                         'fecha': moment(form.fecha).format('YYYY-MM-DDTHH:mm') }).then(response=>{ handleModalInsertar(); peticionGet(); })
+                                                         'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
   }
 
 const peticionDelete = () => {
@@ -124,7 +121,7 @@ const handleModalInsertar = () => {
 
 const seleccionarEntrenamiento = (entrenamiento) => {
 setTipoModal('actualizar');
-setForm({        id: entrenamiento.id,
+setForm({  id: entrenamiento.id,
                  usuario: username, // {auth.username}
                  description: entrenamiento.description,
                  categoria: entrenamiento.categoria.id,
@@ -165,7 +162,7 @@ setForm({
       <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
       </Alert>
       <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
-      <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData}/>
+          <CategoriesSelector data={data} filteredData={filteredData} setFilteredData={setFilteredData} categories={categorias} />
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center", color:'white'}}>
@@ -191,7 +188,7 @@ setForm({
                 <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
                 <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
-                </td>
+          </td>
           </tr>
           )
         }) || "No hay informacion para esa categoria"}
@@ -206,7 +203,7 @@ setForm({
                   <div className="form-group">
                     <label htmlFor="categoria">Categoria</label>
                     <select className="form-control" name='categoria' id='categoria' required onChange={handleChange} value={form?form.categoria: ''}>
-                    <option disable>  </option>
+                    <option>  </option>
                     {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                     ))}

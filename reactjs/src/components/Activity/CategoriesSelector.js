@@ -18,9 +18,10 @@ const MenuProps = {
   },
 };
 
-const CategoriesSelector = ({data, setData, filteredData, setFilteredData, username, categories}) => {
-  const [categorias, setCategorias] = useState(categories);
-  const [categoriesSelected, setCategoriesSelected] = useState("Todas");
+const CategoriesSelector = ({data, filteredData, setFilteredData, categories}) => {
+  const [categorias, setCategorias] = useState(categories) ;
+    const [bandera, setBandera] = useState(0);
+    const [categoriesSelected, setCategoriesSelected] = useState("Todas");
 
   useEffect(()=>{
   const arr = categories.map(element => element.nombre);
@@ -38,7 +39,8 @@ return new Promise((resolve) => setTimeout(resolve, ms));
            if(categoriesSelected.length !== 0){
              if(!isCancelled){
                  await setFilteredData(data) && timeout(1000);
-                 if(categoriesSelected !== "Todas"){
+                 if(categoriesSelected !== "Todas" && bandera == 0){
+                     setBandera(1);
                   const aux = filteredData.filter(registro => categoriesSelected == registro.categoria.nombre);
                   setFilteredData(aux);
                  }
@@ -49,9 +51,10 @@ return new Promise((resolve) => setTimeout(resolve, ms));
     return () => {
     isCancelled = true;
     }
-  }, [categoriesSelected, filteredData])
+  }, [categoriesSelected])
 
   const handleChange = (event) => {
+      setBandera(0);
     setCategoriesSelected(event.target.value);
   };
 
