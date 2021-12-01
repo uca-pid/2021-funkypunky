@@ -28,7 +28,7 @@ const CategoriesSelector = ({data, filteredData, setFilteredData, categories}) =
   arr.push("Todas");
   setCategorias(arr);
         setFilteredData(data);
-  },[categoriesSelected])
+  },[])
 
 function timeout(ms){
 return new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,9 +39,10 @@ return new Promise((resolve) => setTimeout(resolve, ms));
            if(categoriesSelected.length !== 0){
              if(!isCancelled){
                  await setFilteredData(data) && timeout(1000);
+
                  if(categoriesSelected !== "Todas" && bandera == 0){
                      setBandera(1);
-                  const aux = filteredData.filter(registro => categoriesSelected == registro.categoria.nombre);
+                  const aux = data.filter(registro => categoriesSelected == registro.categoria.nombre);
                   setFilteredData(aux);
                  }
              }
