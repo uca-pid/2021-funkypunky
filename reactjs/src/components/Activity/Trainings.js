@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-
 // {auth.username}`
 
 const MySwal = withReactContent(Swal);
@@ -37,7 +36,7 @@ const [categoriesSelected, setCategoriesSelected] = useState([]);
 
 useEffect(()=>{
 setFilteredData(data)
-}, [data, setData]);
+}, [data]);
 
  useEffect(() => {
   if (localStorage && localStorage.jwtToken) {
@@ -84,9 +83,11 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
  }
 
-const peticionPut = () => {
+const peticionPut= () => {
+console.log(form.fecha, 'form.fecha')
   if(form.fecha.length == 29){
     form.fecha = form.fecha.slice(0, 16);
+    console.log(form.fecha, 'form.fecha cortadaaaa')
   }
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
@@ -125,7 +126,7 @@ setForm({        id: entrenamiento.id,
                  hora: entrenamiento.endTime,
                  duracion: entrenamiento.duracion,
                  calorias: entrenamiento.categoria.calPerMin,
-                 })
+                 });
 }
 
 const handleChange = async e => {
@@ -155,7 +156,7 @@ setForm({
   return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
     <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
   <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
-      <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData}/>
+      <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData} username={username} categories={categorias} />
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -184,7 +185,7 @@ setForm({
                 </td>
           </tr>
           )
-        }) || "No hay informacion para esa categoria"}
+        })}
       </tbody>
     </table>
     <Modal isOpen={modalInsertar}>
@@ -214,9 +215,10 @@ setForm({
                 </ModalBody>
                 <ModalFooter>
                   {tipoModal==='insertar'?
-                    <button className="btn btn-success" onClick={()=>peticionPost()}>
+                    <button className="btn btn-success" onClick={peticionPost}>
                     Insertar
-                  </button>: <button className="btn btn-primary" onClick={()=>peticionPut()}>
+                  </button>:
+                  <button className="btn btn-primary" onClick={peticionPut}>
                     Actualizar
                   </button>
                   }

@@ -6,6 +6,9 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import axios from "axios";
+import {BASE_DEV_URL} from "../../utils/constants.js";
+
 
 const ITEM_HEIGHT = 20;
 const ITEM_PADDING_TOP = 8;
@@ -17,7 +20,7 @@ const MenuProps = {
     },
   },
 };
-
+/*
 const categories = [
   'Todas',
   'Correr',
@@ -26,13 +29,31 @@ const categories = [
   'Natacion',
   'Libre'
 ];
-
-const CategoriesSelector = ({data, setData, filteredData, setFilteredData}) => {
+*/
+const CategoriesSelector = ({data, setData, filteredData, setFilteredData, username, categories}) => {
+  //const [categories, setCategories] = useState();
+  const [categorias, setCategorias] = useState(categories);
   const [categoriesSelected, setCategoriesSelected] = useState("Todas");
 
+/*
+const peticionGetCategories = async () =>{
+ await axios.get(BASE_DEV_URL + "rest/categorias/categoriaByUser?user_email="+ username).then(response=>{
+  setCategories(response.data);
+  console.log(response.data, 'categorieeeees')
+}).catch(error=>{
+  console.log(error.message);
+})
+}
+*/
+
+
   useEffect(()=>{
+  const arr = categories.map(element => element.nombre);
+  arr.push("Todas");
+  setCategorias(arr);
         setFilteredData(data);
   },[categoriesSelected])
+
 function timeout(ms){
 return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -71,11 +92,13 @@ return new Promise((resolve) => setTimeout(resolve, ms));
           input={<OutlinedInput label="Filtrar por deporte" />}
           MenuProps={MenuProps}
         >
-          {categories.map((category) => (
+
+          {categorias.map((category) => (
             <MenuItem key={category} value={category}>
               <ListItemText primary={category} />
             </MenuItem>
           ))}
+
         </Select>
       </FormControl>
     </div>

@@ -12,9 +12,6 @@ import { Container, Row, Col } from 'react-grid-system';
 import jwt_decode from "jwt-decode";
 
 
-
-
-
 const PieChart = (props) => {
     const {
           setSingleDate,
