@@ -21,7 +21,7 @@ const ProgressBar = (props) => {
 
 	return (
 		<div className={classes.progress}>
-		{done !== "0" ?
+		{done && done !== "0" && Number(done) ?
 		<div className={classes.progressDone} style={style}>
         				    {done}%
         </div> : < div className={classes.noProgress}> No has registrado entrenamientos aun este mes!</div>

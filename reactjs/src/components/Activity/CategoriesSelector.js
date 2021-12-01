@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
+
 
 const ITEM_HEIGHT = 20;
 const ITEM_PADDING_TOP = 8;
@@ -18,21 +18,17 @@ const MenuProps = {
   },
 };
 
-const categories = [
-  'Todas',
-  'Correr',
-  'Caminar',
-  'Ciclismo',
-  'Natacion',
-  'Libre'
-];
-
-const CategoriesSelector = ({data, setData, filteredData, setFilteredData}) => {
+const CategoriesSelector = ({data, setData, filteredData, setFilteredData, username, categories}) => {
+  const [categorias, setCategorias] = useState(categories);
   const [categoriesSelected, setCategoriesSelected] = useState("Todas");
 
   useEffect(()=>{
+  const arr = categories.map(element => element.nombre);
+  arr.push("Todas");
+  setCategorias(arr);
         setFilteredData(data);
   },[categoriesSelected])
+
 function timeout(ms){
 return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -71,11 +67,13 @@ return new Promise((resolve) => setTimeout(resolve, ms));
           input={<OutlinedInput label="Filtrar por deporte" />}
           MenuProps={MenuProps}
         >
-          {categories.map((category) => (
+
+          {categorias.map((category) => (
             <MenuItem key={category} value={category}>
               <ListItemText primary={category} />
             </MenuItem>
           ))}
+
         </Select>
       </FormControl>
     </div>

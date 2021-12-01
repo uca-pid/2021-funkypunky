@@ -92,6 +92,9 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
 
 const peticionPut = () => {
+  if(form.fecha.length == 29){
+    form.fecha = form.fecha.slice(0, 16);
+  }
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
                                                          'descripcion': form.description,
