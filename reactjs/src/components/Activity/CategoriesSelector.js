@@ -61,8 +61,8 @@ return new Promise((resolve) => setTimeout(resolve, ms));
 
   return (
     <div>
-      <FormControl sx={{ m: 2, minWidth: 150 }}>
-        <InputLabel id="demo-multiple-checkbox-label">Filtrar por deporte</InputLabel>
+      <FormControl style={{color: 'white'}} sx={{ m: 2, minWidth: 150 }}>
+        <InputLabel style={{color: 'white'}} id="demo-multiple-checkbox-label">Filtrar por deporte</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"

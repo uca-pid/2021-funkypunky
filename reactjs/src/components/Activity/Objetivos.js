@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { withStyles } from '@mui/styles';
 import {styles} from'./styles'
+import { Container, Row, Col } from 'react-grid-system';
 
 // {auth.username}
 
@@ -287,38 +288,47 @@ setForm({
   }
 
   return loading ? <div >Cargando datos...</div> :
-    <div className={classes.root} className="App py-3 px-md-5">
-   <div className={classes.container}>
-  <button className="btn btn-success" onClick={handleAgregarObjetivo}>Agregar objetivo</button>
-  <br/>
-   <div  style={{color: 'white', display:'inline-block'}}>
-        Desde:
-        <input value={inicio} onInput={e => setInicio(e.target.value)} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
-        Hasta:
-        <input  value={fin} onInput={e => setFin(e.target.value)} className="form-control" required type="month" name="fecha_final" id="fecha_final" />
-        <br/>
-        <button className="btn btn-primary" onClick={peticionGetRango}>
-          Obtener % Cals/Obj
-        </button>
-   </div>
-   </div>
+    <div className={classes.root}>
+    <Alert style={{ backgroundColor: "#343A40", color: "#ffffff80" }}>
+    <button className="btn btn-success" onClick={handleAgregarObjetivo}>Agregar objetivo</button>
+    </Alert>
+
+    <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
+  <Container>
+  <Row>
+  <Col sm={4}>
+  Desde:
+          <input value={inicio} onInput={e => setInicio(e.target.value)} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
+  </Col>
+  <Col sm={4}>
+    Hasta:
+            <input  value={fin} onInput={e => setFin(e.target.value)} className="form-control" required type="month" name="fecha_final" id="fecha_final" />
+  </Col>
+   </Row>
    <br/>
-   <Alert style={{ backgroundColor: "#343A40", color: "#ffffff80" }}>
+   <button className="btn btn-primary" onClick={peticionGetRango}>
+             Obtener % Cals/Obj
+           </button>
+   </Container>
+   <br/>
    <h3 style={{color: 'white'}}>General de Objetivos por Mes</h3>
    <br/>
   <Bar data={dataChart} options={options} />
-  </Alert>
+  </div>
   <br/>
+  <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%'}}>
   <h3 style={{color: 'white'}}>Descripcion de Categorias en el Mes</h3>
   <div style={{display:'inline-block'}}>
-  Mes:
+  <div style={{color: 'white'}}> Mes: </div>
   <input  value={mes} onInput={e => setMes(e.target.value)} className="form-control" required type="month" name="mes" id="mes" />
   <br/>
   <button className="btn btn-primary" onClick={peticionGetMes}>Ver en Detalle</button>
   </div>
   <Bar data={dataChartMes} options={options} />
   <br/>
-  <br/>
+  </div>
+    <br/>
+<div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
   <h3 style={{color: 'white'}}>Gestion de Objetivos</h3>
   <br/>
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -362,6 +372,7 @@ setForm({
         }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>
+    </div>
     <Modal isOpen={modalInsertar}>
                 <ModalHeader style={{display: 'block'}}>
                   <span style={{float: 'right'}} onClick={handleModalInsertar}>x</span>

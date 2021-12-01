@@ -17,7 +17,7 @@ function swalAlert(texto){
     return MySwal.fire(texto)
 }
 
-class Trainings extends Component {
+class Categorias extends Component {
 state={
   data:null,
   modalInsertar: false,
@@ -133,14 +133,15 @@ await this.setState({
                 <div style={{color: 'white'}}>Cargando datos...</div>)
     }
   return (
-    <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
+    <div className="App py-3 px-md-5"  >
+    <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
     <h2 style={{color: "white"}}>Categorias Fijas</h2>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
-          <th>Nombre</th>
-          <th>Calorias Por Minuto</th>
+          <th style={{color: 'white'}}>Nombre</th>
+          <th style={{color: 'white'}}>Calorias Por Minuto</th>
         </tr>
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
@@ -148,16 +149,16 @@ await this.setState({
         if (categoria.is_editable == 'NOT_EDITABLE'){
           return(
             <tr>
-          <td>{categoria.nombre}</td>
-          <td>{categoria.calPerMin}</td>
+          <td style={{color: 'white'}}>{categoria.nombre}</td>
+          <td style={{color: 'white'}}>{categoria.calPerMin}</td>
           </tr>
           )
         }})}
       </tbody>
     </table>
-
+    </div>
     <br /><br />
-
+    <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
     <h2 style={{color: "white"}}>Categorias Personalizadas</h2>
     <br />
     <button className="btn btn-success" onClick={()=>{this.setState({ form:{id:'', nombre:'', calPerMin:'', user_mail: ''}, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Categoria</button>
@@ -165,8 +166,8 @@ await this.setState({
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center",}}>
         <tr>
-          <th>Nombre</th>
-          <th>Calorias Por Minuto</th>
+          <th style={{color: 'white'}}>Nombre</th>
+          <th style={{color: 'white'}}>Calorias Por Minuto</th>
           <th> </th>
         </tr>
       </thead>
@@ -175,9 +176,9 @@ await this.setState({
         if (categoria.is_editable == 'EDITABLE'){
           return(
             <tr>
-          <td>{categoria.nombre}</td>
-          <td>{categoria.calPerMin}</td>
-          <td>
+          <td style={{color: 'white'}}>{categoria.nombre}</td>
+          <td style={{color: 'white'}}>{categoria.calPerMin}</td>
+          <td style={{color: 'white'}}>
                 <button className="btn btn-primary" onClick={()=>{this.seleccionarcategoria(categoria); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
                 <button className="btn btn-danger" onClick={()=>{this.seleccionarcategoria(categoria); this.setState({modalEliminar: true})}}><FontAwesomeIcon icon={faTrashAlt}/></button>
@@ -187,7 +188,7 @@ await this.setState({
         }})}
       </tbody>
     </table>
-
+    </div>
 
     <Modal isOpen={this.state.modalInsertar}>
                 <ModalHeader style={{display: 'block'}}>
@@ -233,4 +234,4 @@ await this.setState({
   );
 }
 }
-export default Trainings;
+export default Categorias;

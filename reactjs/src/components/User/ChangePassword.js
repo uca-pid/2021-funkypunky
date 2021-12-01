@@ -31,12 +31,17 @@ const ChangePassword = () => {
 
 
   const changePassword = async () =>{
-   await axios.post(BASE_DEV_URL + 'rest/user/changeUserPw', {'username': username, 'password': inputValue}).then(response=>{
-    return MySwal.fire('Se ha modificado correctamente')
+  if(inputValue.length < 7){
+    MySwal.fire('Introduzca contraseña de al menos 7 caracteres')
+  }else{
+      await axios.post(BASE_DEV_URL + 'rest/user/changeUserPw', {'username': username, 'password': inputValue}).then(response=>{
+          return MySwal.fire('Se ha modificado correctamente')
 
-  }).catch(error=>{
-    console.log(error.message);
-  })
+        }).catch(error=>{
+          console.log(error.message);
+        })
+  }
+
   }
 
 

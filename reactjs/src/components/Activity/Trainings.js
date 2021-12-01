@@ -12,7 +12,10 @@ import CategoriesSelector from './CategoriesSelector.js'
 import { useSelector } from "react-redux";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
+import moment from "moment";
+import { withStyles } from '@mui/styles';
+import {styles} from'./styles'
+import { Alert } from "react-bootstrap";
 
 // {auth.username}`
 
@@ -22,7 +25,11 @@ function swalAlert(texto){
     return MySwal.fire(texto)
 }
 
-const Trainings = () => {
+const Trainings = (props) => {
+
+const {
+    classes
+    } = props;
 
 const [data, setData] = useState([]);
 const [categorias, setCategorias] = useState([]);
@@ -85,15 +92,12 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
 
 const peticionPut = () => {
-  if(form.fecha.length == 29){
-    form.fecha = form.fecha.slice(0, 16);
-  }
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
                                                          'descripcion': form.description,
                                                          'duracion':parseInt(form.duracion),
                                                          'usuario': username,
-                                                         'fecha': form.fecha,}).then(response=>{ handleModalInsertar(); peticionGet(); })
+                                                         'fecha': moment(form.fecha).format('YYYY-MM-DDTHH:mm') }).then(response=>{ handleModalInsertar(); peticionGet(); })
   }
 
 const peticionDelete = () => {
@@ -153,18 +157,21 @@ setForm({
   }
 
   return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
-    <div className="App py-3 px-md-5"  style={{backgroundColor: "#CDCDCD"}}>
-  <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
+    <div className={classes.root}>
+       <Alert style={{ backgroundColor: "#343A40", color: "#ffffff80" }}>
+      <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
+      </Alert>
+      <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
       <CategoriesSelector data={data} setData={setData} filteredData={filteredData} setFilteredData={setFilteredData}/>
   <br /><br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
-      <thead style={{textAlignVertical: "center",textAlign: "center",}}>
+      <thead style={{textAlignVertical: "center",textAlign: "center", color:'white'}}>
         <tr>
-          <th>Categoria</th>
-          <th>Descripcion</th>
-          <th>Fecha y Hora de Inicio</th>
-          <th>Duracion (min)</th>
-          <th>Calorias Quemadas</th>
+          <th style={{color: 'white'}}>Categoria</th>
+          <th style={{color: 'white'}}>Descripcion</th>
+          <th style={{color: 'white'}}>Fecha y Hora de Inicio</th>
+          <th style={{color: 'white'}}>Duracion (min)</th>
+          <th style={{color: 'white'}}>Calorias Quemadas</th>
           <th> </th>
         </tr>
       </thead>
@@ -172,11 +179,11 @@ setForm({
         {filteredData.map(entrenamiento => {
           return(
           <tr key={entrenamiento.id}>
-          <td>{entrenamiento.categoria.nombre}</td>
-          <td>{entrenamiento.description}</td>
-          <td><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
-          <td>{entrenamiento.duracion}</td>
-          <td>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
+          <td style={{color: 'white'}}>{entrenamiento.categoria.nombre}</td>
+          <td style={{color: 'white'}}>{entrenamiento.description}</td>
+          <td style={{color: 'white'}}><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
+          <td style={{color: 'white'}}>{entrenamiento.duracion}</td>
+          <td style={{color: 'white'}}>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
           <td>
                 <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
@@ -187,6 +194,7 @@ setForm({
         }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>
+    </div>
     <Modal isOpen={modalInsertar}>
                 <ModalHeader style={{display: 'block'}}>
                   <span style={{float: 'right'}} onClick={handleModalInsertar}>x</span>
@@ -234,4 +242,4 @@ setForm({
           </Modal>
   </div>
 }
-export default Trainings;
+export default withStyles(styles)(Trainings);
