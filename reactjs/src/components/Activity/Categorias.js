@@ -80,7 +80,7 @@ peticionPut=()=>{
 }
 
 peticionDelete=()=>{
-  axios.post(BASE_DEV_URL + 'rest/categorias/eliminarCategoria',{id:this.state.form.id}).then(response=>{
+  axios.post(BASE_DEV_URL + 'rest/categorias/eliminarCategoria',{id:this.state.form.id, 'user_mail': this.state.form.user_mail}).then(response=>{
     this.setState({modalEliminar: false});
     this.peticionGet();
   })
@@ -220,7 +220,7 @@ await this.setState({
 
           <Modal isOpen={this.state.modalEliminar}>
             <ModalBody>
-            Al eliminar {form && form.nombre}, se eliminaran TODOS sus entrenamientos.
+            Al eliminar {form && form.nombre}, se eliminaran TODOS sus entrenamientos y objetivos relacionados.
             <br/>
             <br/>
             Continuar?

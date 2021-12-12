@@ -64,7 +64,7 @@ public class ObjetivosResourceImpl {
 		do{
 			Collection<Objetivo> objetivo = objetivoService.findByUserAndPeriodRange(user, actualMonth, actualMonth);
 			for (Objetivo objetivo1 : objetivo) {
-				acum_objetivo_logrado += (metricasResource.getCaloriesInRange(user_email,actualMonth.toString(),actualMonth.toString()).getOrDefault(objetivo1.getPeriod(),0f));
+				acum_objetivo_logrado += metricasResource.getCaloriesInMonthAndCategory(user_email,actualMonth,objetivo1.getCategoria());
 				acum_objetivo += objetivo1.getTargetCaloryCount();
 			}
 			metaTotal.setProgressCalory(acum_objetivo_logrado);

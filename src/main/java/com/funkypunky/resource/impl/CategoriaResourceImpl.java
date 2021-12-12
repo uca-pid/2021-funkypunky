@@ -5,6 +5,7 @@ import com.funkypunky.domain.Editable;
 import com.funkypunky.domain.User;
 import com.funkypunky.repository.CategoriaRepository;
 import com.funkypunky.repository.EntrenamientoRepository;
+import com.funkypunky.repository.ObjetivoRepository;
 import com.funkypunky.service.impl.CategoriaServiceImpl;
 import com.funkypunky.service.impl.UserServiceImpl;
 import org.codehaus.jettison.json.JSONException;
@@ -38,6 +39,9 @@ public class CategoriaResourceImpl {
 
 	@Autowired
 	private EntrenamientoRepository entrenamientoRepository;
+
+	@Autowired
+	private ObjetivoRepository objetivoRepository;
 
 	@GetMapping("/categoriaByUser")
 	@ResponseBody
@@ -120,6 +124,8 @@ public class CategoriaResourceImpl {
 	@PostMapping(value = "/eliminarCategoria", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> eliminarCategoria(@RequestBody Map<String, Object> payload) {
 		Long id = new Long((Integer) payload.get("id"));
+		String user_mail = (String) payload.get("user_mail");
+
 		JSONObject jsonObject = new JSONObject();
 		if(!categoriaService.findById(id).isPresent()){
 			return new ResponseEntity<>("Categoria with ID "+ id +" does not exist", HttpStatus.BAD_REQUEST);
@@ -131,6 +137,7 @@ public class CategoriaResourceImpl {
 			if(categoria.getIs_editable().equals(Editable.NOT_EDITABLE)){
 				return new ResponseEntity<>("La categoria no es editable", HttpStatus.NOT_ACCEPTABLE);
 			}
+			objetivoRepository.deleteByUserAndCategory(userService.findByEmail(user_mail).get(),categoria);
 			entrenamientoRepository.deleteByCategoria(categoria);
 			categoriaRepository.deleteById(id);
 
