@@ -22,12 +22,16 @@ const CategoriesSelector = ({data, filteredData, setFilteredData, categories}) =
   const [categorias, setCategorias] = useState(categories) ;
     const [bandera, setBandera] = useState(0);
     const [categoriesSelected, setCategoriesSelected] = useState("Todas");
+    const [catCargadas, setCatCargadas] = useState(0);
 
   useEffect(()=>{
-  const arr = categories.map(element => element.nombre);
-  arr.push("Todas");
-  setCategorias(arr);
-        setFilteredData(data);
+  if ( catCargadas == 0){
+    const arr = categories.map(element => element.nombre);
+    arr.push("Todas");
+    setCategorias(arr);
+    setCatCargadas(1);
+  }
+  setFilteredData(data);
   },[])
 
 function timeout(ms){
