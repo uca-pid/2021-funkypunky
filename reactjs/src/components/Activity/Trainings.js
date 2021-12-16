@@ -97,15 +97,19 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
 
 const peticionPut = () => {
-  if(form.duracion < 0){
-    swalAlert("No puedes tener la duracion negativo");
+  if(form.categoria == '' || form.description == '' || form.duracion == '' || form.fecha == ''){
+          swalAlert("Hay campos vacios");
   }else{
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
-                                                         'id_categoria':parseInt(form.categoria),
-                                                         'descripcion': form.description,
-                                                         'duracion':parseInt(form.duracion),
-                                                         'usuario': username,
-                                                         'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  if(form.duracion < 0){
+      swalAlert("No puedes tener la duracion negativo");
+    }else{
+    axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
+                                                           'id_categoria':parseInt(form.categoria),
+                                                           'descripcion': form.description,
+                                                           'duracion':parseInt(form.duracion),
+                                                           'usuario': username,
+                                                           'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
+    }
   }
   }
 

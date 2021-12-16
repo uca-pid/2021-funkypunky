@@ -77,14 +77,18 @@ peticionPost=async()=>{
 }
 
 peticionPut=()=>{
-if(this.state.form.calPerMin < 0){
-    swalAlert("No puedes tener objetivo negativo de calorias");
- }else{
- axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
-     this.modalInsertar();
-     this.peticionGet();
-   })
- }
+if(this.state.form.calPerMin == '' || this.state.form.nombre == '' ){
+          swalAlert("Hay campos vacios");
+  }else{
+  if(this.state.form.calPerMin < 0){
+      swalAlert("No puedes tener CaloriasPorMinuto negativo de calorias");
+   }else{
+   axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
+       this.modalInsertar();
+       this.peticionGet();
+     })
+   }
+  }
 }
 
 peticionDelete=()=>{
