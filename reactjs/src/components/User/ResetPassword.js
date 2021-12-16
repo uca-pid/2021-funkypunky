@@ -25,16 +25,8 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-function swalAlert(){
-    MySwal.fire({
-      title: <p>Hello Funky Punky</p>,
-      footer: 'Copyright 2021',
-      didOpen: () => {
-        MySwal.clickConfirm()
-      }
-    }).then(() => {
-      return MySwal.fire(<p>Se ha enviado correctamente</p>)
-    })
+function swalAlert(texto){
+    return MySwal.fire(texto)
 }
 
 const ResetPassword = (props) => {
@@ -58,13 +50,14 @@ const ResetPassword = (props) => {
         .then((response) => {
           setShow(true);
           setMessage(response.message);
-          swalAlert();
+          swalAlert("Se ha enviado correctamente una nueva contraseña");
           setTimeout(() => {
             setShow(false);
             props.history.push("/resetpassword");
           }, 2000);
         })
         .catch((error) => {
+          swalAlert("No se registro una cuenta con ese usuario");
           console.log(error);
         });
   };

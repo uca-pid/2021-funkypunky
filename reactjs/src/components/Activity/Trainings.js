@@ -79,6 +79,9 @@ setForm({...form, usuario: username}); // {auth.username}
 if(form.categoria == '' || form.description == '' || form.duracion == '' || form.fecha == ''){
         swalAlert("Hay campos vacios");
  }else{
+ if(form.duracion < 0){
+     swalAlert("No puedes tener la duracion negativo");
+  }else{
   delete form.id;
    await axios.post(BASE_DEV_URL + 'rest/entrenamiento/agregarEntrenamiento',{'id_categoria': parseInt(form.categoria),
                                                                 'descripcion': form.description,
@@ -90,14 +93,19 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
                                                                                           }).catch(error=>{ console.log(error.message); })
  }
  }
+ }
 
 const peticionPut = () => {
+  if(form.duracion < 0){
+    swalAlert("No puedes tener la duracion negativo");
+  }else{
   axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
                                                          'id_categoria':parseInt(form.categoria),
                                                          'descripcion': form.description,
                                                          'duracion':parseInt(form.duracion),
                                                          'usuario': username,
                                                          'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  }
   }
 
 const peticionDelete = () => {

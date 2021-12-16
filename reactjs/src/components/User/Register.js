@@ -53,8 +53,11 @@ const Register = (props) => {
   if(user.name == '' || user.email == '' || user.password == '' || user.mobile == '' ){
     swalAlert("Hay campos vacios");
   }else{
-    if(user.password.length < 7){
-        swalAlert("La contraseña debe tener al menos 7 caracteres");
+    if(user.password.length < 7 || user.mobile.length < 7){
+        swalAlert("La contraseña y el numero de celular debe tener al menos 7 caracteres");
+    }else{
+    if(user.mobile < 0){
+            swalAlert("El celular no puede ser negativo");
     }else{
          dispatch(registerUser(user))
                .then((response) => {
@@ -70,6 +73,7 @@ const Register = (props) => {
                  swalAlert("Ya existe un usuario registrado con ese mail");
                  //console.log(error);
                });
+       }
        }
   }
   };
@@ -169,6 +173,7 @@ const Register = (props) => {
                       onChange={userChange}
                       className={"bg-dark text-white"}
                       placeholder="Enter Mobile Number"
+                      type="number"
                     />
                   </InputGroup>
                 </Form.Group>

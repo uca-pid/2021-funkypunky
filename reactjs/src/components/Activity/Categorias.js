@@ -51,10 +51,14 @@ peticionPost=async()=>{
     if(this.state.form.nombre == '' || this.state.form.calPerMin == ''){
         swalAlert("Hay campos vacios");
         console.log()
-    }else{
-    if (obj.nombre.toUpperCase() == this.state.form.nombre.toUpperCase()){
+        bandera = 0;
+    }else{ if (obj.nombre.toUpperCase() == this.state.form.nombre.toUpperCase()){
             bandera = 0;
             swalAlert("No puedes crear 2 categorias con el mismo nombre");
+         }else{ if(this.state.form.calPerMin < 0){
+                    bandera = 0;
+                    swalAlert("No puedes tener la CaloriaPorMinuto negativo");
+                 }
          }
     }
 
@@ -73,10 +77,14 @@ peticionPost=async()=>{
 }
 
 peticionPut=()=>{
-  axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
-    this.modalInsertar();
-    this.peticionGet();
-  })
+if(this.state.form.calPerMin < 0){
+    swalAlert("No puedes tener objetivo negativo de calorias");
+ }else{
+ axios.post(BASE_DEV_URL + 'rest/categorias/editarCategoria', {'nombre': this.state.form.nombre, 'calPerMin': parseInt(this.state.form.calPerMin), 'id': this.state.form.id}).then(response=>{
+     this.modalInsertar();
+     this.peticionGet();
+   })
+ }
 }
 
 peticionDelete=()=>{
