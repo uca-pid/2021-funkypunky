@@ -41,6 +41,7 @@ const [tipoModal, setTipoModal] = useState();
 const [loading, setLoading] = useState(true);
 const [filteredData, setFilteredData] = useState(data);
 const [categoriesSelected, setCategoriesSelected] = useState([]);
+const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('TODAS');
 
 useEffect(()=>{
 setFilteredData(data)
@@ -96,15 +97,19 @@ if(form.categoria == '' || form.description == '' || form.duracion == '' || form
  }
 
 const peticionPut = () => {
-  if(form.duracion < 0){
-    swalAlert("No puedes tener la duracion negativo");
+  if(form.categoria == '' || form.description == '' || form.duracion == '' || form.fecha == ''){
+          swalAlert("Hay campos vacios");
   }else{
-  axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
-                                                         'id_categoria':parseInt(form.categoria),
-                                                         'descripcion': form.description,
-                                                         'duracion':parseInt(form.duracion),
-                                                         'usuario': username,
-                                                         'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  if(form.duracion < 0){
+      swalAlert("No puedes tener la duracion negativo");
+    }else{
+    axios.post(BASE_DEV_URL + 'rest/entrenamiento/editarEntrenamiento', {'id': form.id,
+                                                           'id_categoria':parseInt(form.categoria),
+                                                           'descripcion': form.description,
+                                                           'duracion':parseInt(form.duracion),
+                                                           'usuario': username,
+                                                           'fecha':moment(form.fecha).format('YYYY-MM-DDTHH:mm')}).then(response=>{ handleModalInsertar(); peticionGet(); })
+    }
   }
   }
 
@@ -148,6 +153,11 @@ setForm({
   })
 };
 
+  const handleChangeCategoriaSeleccionada = (categoriaSeleccionada) =>{
+    console.log(categoriaSeleccionada.target.value);
+    setCategoriaSeleccionada(categoriaSeleccionada.target.value)
+    };
+
   const handleAgregarEntrenamiento = (entrenamiento) =>{
   setForm({ id:'', usuario: '', description:'', categoria:'', fecha:'', hora:'', duracion:''});
   setTipoModal('insertar');
@@ -157,6 +167,17 @@ setForm({
   const handleEditarEntrenamiento = (entrenamiento) =>{
   seleccionarEntrenamiento(entrenamiento);
   handleModalInsertar()
+  }
+
+  const nombreCategoria = (categoriaSeleccionada) =>{
+  console.log(categoriaSeleccionada, ' id');
+  for(let i = 0; i < categorias.length; i++ ){
+    if (categorias[i].id == categoriaSeleccionada){
+        console.log(categorias[i].nombre);
+        return categorias[i].nombre;
+    }
+  }
+
   }
 
   const handleEliminarEntrenamiento = (entrenamiento) =>{
@@ -170,8 +191,19 @@ setForm({
       <button className="btn btn-success" onClick={handleAgregarEntrenamiento}>Agregar entrenamiento</button>
       </Alert>
       <div style={{border: '5px solid rgb(33,37,41)',borderRadius: '10px', padding:'3%', color:'white'}}>
-          <CategoriesSelector data={data} filteredData={filteredData} setFilteredData={setFilteredData} categories={categorias} />
-  <br /><br />
+      <div>
+        Filtrar por Deporte:
+      </div>
+      <br />
+      <select value={categoriaSeleccionada} className="form-control" name='categoria' id='categoriaSeleccionada' required onChange={handleChangeCategoriaSeleccionada} >
+                          <option disabled>  </option>
+                          <option key={"TODAS"} value={"TODAS"}>TODAS</option>
+                          {categorias.map(cat => (
+                              <option key={cat.nombre} value={cat.id}>{cat.nombre}</option>
+                          ))}
+      </select>
+
+  <br />
     <table className="table " style={{textAlignVertical: "center",textAlign: "center",}}>
       <thead style={{textAlignVertical: "center",textAlign: "center", color:'white'}}>
         <tr>
@@ -185,20 +217,41 @@ setForm({
       </thead>
       <tbody style={{textAlignVertical: "center",textAlign: "center",}}>
         {filteredData.map(entrenamiento => {
+        if(categoriaSeleccionada == 'TODAS'){
+            return(
+                  <tr key={entrenamiento.id}>
+                  <td style={{color: 'white'}}>{entrenamiento.categoria.nombre}</td>
+                  <td style={{color: 'white'}}>{entrenamiento.description}</td>
+                  <td style={{color: 'white'}}><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
+                  <td style={{color: 'white'}}>{entrenamiento.duracion}</td>
+                  <td style={{color: 'white'}}>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
+                  <td>
+                        <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
+                        {"   "}
+                        <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                  </td>
+                  </tr>
+                  )
+        }else{
+          if( entrenamiento.categoria.nombre == nombreCategoria(categoriaSeleccionada) ){
           return(
-          <tr key={entrenamiento.id}>
-          <td style={{color: 'white'}}>{entrenamiento.categoria.nombre}</td>
-          <td style={{color: 'white'}}>{entrenamiento.description}</td>
-          <td style={{color: 'white'}}><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
-          <td style={{color: 'white'}}>{entrenamiento.duracion}</td>
-          <td style={{color: 'white'}}>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
-          <td>
-                <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
-                {"   "}
-                <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
-          </td>
-          </tr>
-          )
+                            <tr key={entrenamiento.id}>
+                            <td style={{color: 'white'}}>{entrenamiento.categoria.nombre}</td>
+                            <td style={{color: 'white'}}>{entrenamiento.description}</td>
+                            <td style={{color: 'white'}}><Timestamp date={entrenamiento.startTime} options={{ includeDay: false, twentyFourHour: true }} /></td>
+                            <td style={{color: 'white'}}>{entrenamiento.duracion}</td>
+                            <td style={{color: 'white'}}>{entrenamiento.categoria.calPerMin * entrenamiento.duracion}</td>
+                            <td>
+                                  <button className="btn btn-primary" onClick={() => handleEditarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faEdit}/></button>
+                                  {"   "}
+                                  <button className="btn btn-danger" onClick={() => handleEliminarEntrenamiento(entrenamiento)}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                            </td>
+                            </tr>
+                            )
+          }else{
+          return(<div></div>)
+          }
+          }
         }) || "No hay informacion para esa categoria"}
       </tbody>
     </table>

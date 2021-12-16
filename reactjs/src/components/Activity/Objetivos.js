@@ -108,15 +108,19 @@ if(form.periodo == '' || form.objetivo == '' || form.categoria == ''){
  }
 
 const peticionPut = () => {
-if(form.objetivo < 0){
-    swalAlert("No puedes tener objetivo negativo de calorias");
- }else{
-    axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
-                                                                    'id_categoria': parseInt(form.categoria),
-                                                                    'objetivo': parseInt(form.objetivo),
-                                                                    'usuario': username,
-                                                                    "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })
-}
+if(form.periodo == '' || form.objetivo == '' || form.categoria == '' ){
+          swalAlert("Hay campos vacios");
+  }else{
+  if(form.objetivo < 0){
+      swalAlert("No puedes tener objetivo negativo de calorias");
+   }else{
+      axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
+                                                                      'id_categoria': parseInt(form.categoria),
+                                                                      'objetivo': parseInt(form.objetivo),
+                                                                      'usuario': username,
+                                                                      "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  }
+  }
   }
 
 
