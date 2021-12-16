@@ -72,9 +72,12 @@ const peticionGetProgressBarData = async () =>{
        </div>
         <div className={classes.container}>
             <div className={classes.header}>
-              <h4>Calorías quemadas por mes</h4>
+              <h4>Trackeo de Calorias Anual:</h4>
             </div>
             <LineChart startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} />
+            <div className={classes.header}>
+             <h7>Solo mostrara los meses en los que se registraron entrenamientos</h7>
+            </div>
         </div>
   </div>
   );

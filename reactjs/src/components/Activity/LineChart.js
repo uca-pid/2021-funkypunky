@@ -10,6 +10,14 @@ import axios from "axios";
 import {BASE_DEV_URL} from "../../utils/constants.js";
 import { Container, Row, Col } from 'react-grid-system';
 import jwt_decode from "jwt-decode";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
+function swalAlert(texto){
+    return MySwal.fire(texto)
+}
 
 const LineChart = (props) => {
     const {
@@ -23,6 +31,7 @@ const LineChart = (props) => {
     const [values, setValues] = useState([]);
     const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(true);
+    const [anio, setAnio] = useState(2021);
     const peticionGetData = async () => {
     await axios.get(BASE_DEV_URL +"rest/metrics/caloriesInRange?user_email="+username+"&rangeStart="+ startDate + "&rangeEnd=" + endDate).then(response=> {
                         setCategories(Object.keys(response.data));
@@ -48,13 +57,46 @@ const LineChart = (props) => {
                         }
                 }
         peticionGetData();
-    },[startDate, endDate, username])
+    },[username])
 
     const onChangeStartDateHandler = (event) => {
-    setStartDate(event.target.value);
+    if(event == ""){
+        swalAlert("Ingrese un año por favor");
+    }else{
+        if(event<0){
+            swalAlert("Ingrese un año por favor");
+        }else{
+            setStartDate(event.target.value);
+
+        }
+    }
+
+
+
     }
     const onChangeEndDateHandler = (event) => {
     setEndDate(event.target.value);
+    }
+
+    const peticionGetCalorias = (event) => {
+    if(anio < 2000 || anio > 2100){
+        swalAlert("Ingrese un año valido (entre 2000 y 2100)");
+    }else{
+    let fecha1 = anio+"-01";
+        let fecha2 = anio+"-12";
+        axios.get(BASE_DEV_URL +"rest/metrics/caloriesInRange?user_email="+username+"&rangeStart="+ fecha1 + "&rangeEnd=" + fecha2).then(response=> {
+                                setCategories(Object.keys(response.data));
+                                setValues(Object.values(response.data));
+                            }).catch(error=>{
+                                console.log(error.message);
+                            })
+    }
+
+    }
+
+    const onChangeAnioDateHandler = (event) => {
+        setAnio(event.target.value);
+
     }
 
       return loading ? <div style={{color: 'white'}}>Cargando datos...</div> :
@@ -62,13 +104,17 @@ const LineChart = (props) => {
    <Container>
      <Row>
          <Col sm={4}>
-        <input  value={startDate} onInput={e => setStartDate(e.target.value)} onChange={onChangeStartDateHandler} className="form-control" required type="month" name="fecha_inicial" id="fecha_inicial" />
+        <input placeholder="Ingrese año" value={startDate} onInput={e => setStartDate(e.target.value)} onChange={onChangeAnioDateHandler} className="form-control" required type="number" name="fecha_inicial" id="fecha_inicial" />
          </Col>
          <Col sm={4}>
-        <input  value={endDate} onInput={e => setEndDate(e.target.value)}  onChange={onChangeEndDateHandler} className="form-control" required type="month" name="fecha_final" id="fecha_final" />
+           <button className="btn btn-primary" onClick={peticionGetCalorias}>
+             Obtener % Cals/Obj
+           </button>
         </Col>
       </Row>
+      <br />
       <Row>
+      <br />
       <Line
         data={{
           labels: categories,
