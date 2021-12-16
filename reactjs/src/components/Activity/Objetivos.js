@@ -90,25 +90,38 @@ if(form.periodo == '' || form.objetivo == '' || form.categoria == ''){
         console.log()
 
 }else{
+ if(form.objetivo < 0){
+    swalAlert("No puedes tener objetivo negativo de calorias");
+ }else{
  delete form.id;
- await axios.post(BASE_DEV_URL + 'rest/objetivos/agregarObjetivo',{
-                                                              'id_categoria': parseInt(form.categoria),
-                                                              'objetivo': parseInt(form.objetivo),
-                                                              'usuario': username,
-                                                              "periodo": form.periodo}).then(response=> {
-                                                                                        handleModalInsertar();
-                                                                                        peticionGet();
-                                                                                        }).catch(error=>{ console.log(error.message); })
+  await axios.post(BASE_DEV_URL + 'rest/objetivos/agregarObjetivo',{
+                                                               'id_categoria': parseInt(form.categoria),
+                                                               'objetivo': parseInt(form.objetivo),
+                                                               'usuario': username,
+                                                               "periodo": form.periodo}).then(response=> {
+                                                                                         handleModalInsertar();
+                                                                                         peticionGet();
+                                                                                         }).catch(error=>{ console.log(error.message); })
+ }
 }
 
  }
 
 const peticionPut = () => {
-  axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
-                                                                'id_categoria': parseInt(form.categoria),
-                                                                'objetivo': parseInt(form.objetivo),
-                                                                'usuario': username,
-                                                                "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })}
+if(form.periodo == '' || form.objetivo == '' || form.categoria == '' ){
+          swalAlert("Hay campos vacios");
+  }else{
+  if(form.objetivo < 0){
+      swalAlert("No puedes tener objetivo negativo de calorias");
+   }else{
+      axios.post(BASE_DEV_URL + 'rest/objetivos/editarObjetivo', {
+                                                                      'id_categoria': parseInt(form.categoria),
+                                                                      'objetivo': parseInt(form.objetivo),
+                                                                      'usuario': username,
+                                                                      "periodo": form.periodo}).then(response=>{ handleModalInsertar(); peticionGet(); })
+  }
+  }
+  }
 
 
 const peticionGetRango = async () =>{
@@ -388,7 +401,7 @@ setForm({
                    </select>
                     <br/>
                     <label htmlFor="objetivo">Objetivo (Cals. a Quemar)</label>
-                    <input className="form-control" min='0' required type="number" name="objetivo" id="objetivo" onChange={handleChange} value={form?form.objetivo: ''}/>
+                    <input className="form-control" min={0} required type="number" name="objetivo" id="objetivo" onChange={handleChange} value={form?form.objetivo: ''}/>
                     <br />
                     <label htmlFor="periodo">Periodo (mes y año)</label>
                     <input className="form-control" min={dateLimit} required type="month" name="periodo" id="periodo" onChange={handleChange} value={form?form.periodo: ''}/>
